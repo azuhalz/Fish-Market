@@ -24,10 +24,15 @@ struct FishCuttingGameView: View {
     // Animation timer for knife movement
     @State private var knifeTimer: Timer?
     
+    @State private var targetAmount = Int.random(in: 2..<6)
     let fishWidth: CGFloat = 300
     let fishHeight: CGFloat = 150
-    // Membagi ikan menjadi 3 bagian sama rata (1/3 dan 2/3)
-    let targetCuts: [CGFloat] = [100, 200] // fishWidth/3 dan 2*fishWidth/3
+    // Membagi ikan menjadi x bagian sama rata
+    var targetCuts: [CGFloat] {
+        (1..<targetAmount).map { i in
+            fishWidth * CGFloat(i) / CGFloat(targetAmount)
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -76,7 +81,7 @@ struct FishCuttingGameView: View {
                 Spacer()
                 
                 // Instructions
-                Text("Please cut into 3")
+                Text("Please cut into \(targetAmount)")
                     .font(.title2)
                     .fontWeight(.medium)
                     .foregroundColor(.black)
@@ -128,7 +133,7 @@ struct FishCuttingGameView: View {
                                     .frame(width: fishWidth, height: fishHeight)
                                 
                                 // Cutting guide lines - membagi menjadi 3 bagian sama rata
-                                ForEach([fishWidth/3, 2*fishWidth/3], id: \.self) { cutPosition in
+                                ForEach(targetCuts, id: \.self) { cutPosition in
                                     DashedLine()
                                         .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
                                         .frame(width: 2, height: fishHeight)
@@ -242,7 +247,7 @@ struct FishCuttingGameView: View {
     }
     
     func cutFish() {
-        guard fishCuts.count < 2 && timeRemaining > 0 && !isCutting else { return }
+        guard fishCuts.count < (targetAmount-1) && timeRemaining > 0 && !isCutting else { return }
         
         // Start cutting animation
         isCutting = true
@@ -254,38 +259,49 @@ struct FishCuttingGameView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             isCutting = false
             
-            if fishCuts.count == 2 {
+            if fishCuts.count == (targetAmount-1) {
                 // Calculate total score after both cuts are made
                 calculateFinalScore()
                 
                 // Game completed - show cut result
                 showCutResult = true
-                gameStatus = "Perfect! Fish cut into 3 pieces!"
+                gameStatus = "Perfect! Fish cut into \(targetAmount) pieces!"
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     showScore = true
                     knifeTimer?.invalidate()
                 }
-            } else {
-                // Continue for next cut
-                gameStatus = "Great! One more cut needed!"
+            } else if targetAmount > 2 {
+                if fishCuts.count == (targetAmount-2) {
+                    // Continue for next cut
+                    gameStatus = "Great! One more cut needed!"
+                    isKnifeMoving = true
+                }
+            }
+            else {
                 isKnifeMoving = true
             }
         }
     }
     
     func calculateFinalScore() {
-        // Calculate accuracy for both cuts
-        let cut1Accuracy = abs(fishCuts[0] - fishWidth/3)
-        let cut2Accuracy = abs(fishCuts[1] - 2*fishWidth/3)
+        var totalAccuracy: CGFloat = 0.0
+        
+        // Calculate accuracy for all cuts
+        for i in 0..<(targetCuts.count){
+            if i < fishCuts.count {
+                let accuracy = abs(fishCuts[i] - targetCuts[i])
+                totalAccuracy += accuracy
+            }
+        }
         
         // Calculate average accuracy (lower is better)
-        let averageAccuracy = (cut1Accuracy + cut2Accuracy) / 2
+        let averageAccuracy = totalAccuracy / CGFloat(targetCuts.count)
         
         // Convert to score: max 100 points, decreases with distance from target
         // Perfect cut (0 distance) = 100 points
-        // Maximum penalty distance = fishWidth/6 (50 pixels) = 0 points
-        let maxPenaltyDistance: CGFloat = fishWidth/6
+        // Maximum penalty distance = fishWidth/(targetAmount*2) = 0 points
+        let maxPenaltyDistance: CGFloat = fishWidth / CGFloat(targetAmount*2)
         let accuracyRatio = min(averageAccuracy / maxPenaltyDistance, 1.0)
         
         score = max(0, Int(100 * (1.0 - accuracyRatio)))
@@ -294,7 +310,7 @@ struct FishCuttingGameView: View {
     func endGame() {
         knifeTimer?.invalidate()
         isKnifeMoving = false
-        if fishCuts.count < 2 {
+        if fishCuts.count < (targetAmount-1) {
             gameStatus = "Time's up! Try again!"
         }
         showScore = true

@@ -246,6 +246,7 @@ struct FishCuttingGameView: View {
 
             prepareHaptics()
             startKnifeMovement()
+            playBackgroundMusic()
         }
 
         .onReceive(timer) { _ in
@@ -420,6 +421,17 @@ struct FishCuttingGameView: View {
         }
     }
     
+    func playBackgroundMusic() {
+        if let soundURL = Bundle.main.url(forResource: "background_music", withExtension: "mp3") {
+            do {
+                cutAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                cutAudioPlayer?.play()
+            } catch {
+                print("Gagal memutar suara: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func playCutSound() {
         if let soundURL = Bundle.main.url(forResource: "cut_sound", withExtension: "wav") {
             do {
@@ -548,6 +560,7 @@ struct FishCuttingGameView: View {
         fishVerticalOffset = 0
         animateFish()
         startKnifeMovement()
+        playBackgroundMusic()
         customerOffset = -300 // lebih jauh agar jelas dari kiri
         customerOpacity = 0
         

@@ -1,10 +1,13 @@
 import SwiftUI
+import _SwiftData_SwiftUI
 import AVFoundation
 import CoreHaptics
 
 struct ContentView: View {
+    @Binding var isPlaying: Bool
+    
     var body: some View {
-        FishCuttingGameView()
+        FishCuttingGameView(isPlaying: $isPlaying)
     }
 }
 
@@ -42,6 +45,12 @@ struct FishCuttingGameView: View {
     @State private var customerOpacity: Double = 0
     @State private var hasShownFirstCustomer = false
     @State private var requestedCuts = 3
+    @Binding var isPlaying: Bool
+    
+    @Environment(\.modelContext) private var context
+    @Query var trackers: [SatisfiedTracker]
+    @State private var totalSatisfiedFromDB = 0
+
     
     
     // Timer
@@ -61,55 +70,47 @@ struct FishCuttingGameView: View {
             Color.yellow.opacity(0.3)
                 .ignoresSafeArea()
             
-            VStack {
+            VStack (spacing: 0) {
                 // Header
                 HStack {
-                    Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(8)
-                        .background(Color.orange)
-                        .cornerRadius(10)
                     
-                    Spacer()
                     
-                    ZStack(alignment: .topTrailing) {
+                        Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(Color.orange)
+                            .cornerRadius(10)
+                        
+                        Spacer()
+                    ZStack{
                         Text("Satisfied: \(satisfiedCount)")
                             .font(.title3)
                             .fontWeight(.medium)
                             .foregroundColor(.white)
-                            .padding(8)
+                            .padding(10)
                             .background(Color.green)
                             .cornerRadius(10)
                         
                         if showPlusOne {
                             Text("+1")
-                                .font(.headline)
+                                .font(.title3)
                                 .foregroundColor(.yellow)
                                 .offset(y: plusOneOffset)
                                 .transition(.opacity)
                         }
                         
-                        if showEmoji {
-                            Text("🐟") // atau 🎉
-                                .font(.title)
-                                .scaleEffect(1.2)
-                                .offset(y: emojiOffset)
-                                .transition(.opacity)
-                        }
+//                        if showEmoji {
+//                            Text("🐟") // atau 🎉
+//                                .font(.title)
+//                                .scaleEffect(1.2)
+//                                .offset(y: emojiOffset)
+//                                .transition(.opacity)
+//                        }
                     }
                 }
-                .padding(.horizontal, 20)
-                
-                
-                Spacer()
-                
-                // Fish market background (decorative)
-                Text("🐟 Fish Market 🐟")
-                    .font(.headline)
-                    .foregroundColor(.gray)
-                    .opacity(0.7)
+                .padding(20)
                 
                 // Instructions
                 Text(customerMessage)
@@ -120,6 +121,8 @@ struct FishCuttingGameView: View {
                     .background(Color.white)
                     .cornerRadius(20)
                     .shadow(radius: 5)
+                
+                // Person customer
                 Image("person_\(currentCustomerIndex)")
                     .resizable()
                     .scaledToFit()
@@ -142,147 +145,115 @@ struct FishCuttingGameView: View {
                         }
                     }
                 
-                Spacer()
-                
-                // Game Area
                 ZStack {
-                    // Fish cutting area
-                    VStack {
-                        // Fish with cutting guides
-                        ZStack {
-                            if !showCutResult {
-                                Image("cut_board")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 200, height: 200)
-                                    .rotationEffect(.degrees(-45))
-                                
-                                // Original fish
-                                Image("fish\(currentFishIndex)")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: fishWidth, height: fishHeight)
-                                    .rotationEffect(.degrees(fishRotation))
-                                    .offset(x: fishOffsetX, y: fishVerticalOffset)
-                                    .onAppear {
-                                        if !hasPlayedFishSound {
-                                            hasPlayedFishSound = true
-                                            playFishSound()
-                                            animateFish()
-                                        }
-                                    }
-                                
-                                // Cutting guide lines - membagi menjadi 3 bagian sama rata
-                                ForEach(1..<requestedCuts, id: \..self) { i in
-                                    let x = fishWidth * CGFloat(i) / CGFloat(requestedCuts)
-                                    DashedLine()
-                                        .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
-                                        .frame(width: 2, height: fishHeight)
-                                        .offset(x: x - fishWidth/2)
+                    if !showCutResult {
+                        Image("cut_board")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 350, height: 200)
+                        
+                        // Original fish
+                        Image("fish\(currentFishIndex)")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: fishWidth, height: fishHeight)
+                            .rotationEffect(.degrees(fishRotation))
+                            .offset(x: fishOffsetX, y: fishVerticalOffset)
+                            .onAppear {
+                                if !hasPlayedFishSound {
+                                    hasPlayedFishSound = true
+                                    playFishSound()
+                                    animateFish()
                                 }
-                                
-                                // Cut marks
-                                ForEach(Array(fishCuts.enumerated()), id: \.offset) { index, cutPosition in
-                                    Rectangle()
-                                        .fill(Color.red)
-                                        .frame(width: 3, height: fishHeight)
-                                        .offset(x: cutPosition - fishWidth/2)
-                                }
-                            } else {
-                                // Cut fish result
-                                splitFishView()
                             }
+                        
+//                        Rectangle()
+//                                .fill(Color.red.opacity(0.3))
+//                                .frame(width: 3, height: fishHeight)
+//                                .offset(x: knifePosition - fishWidth / 2)
+                        
+                        // Cutting guide lines - membagi menjadi 3 bagian sama rata
+                        ForEach(1..<requestedCuts, id: \..self) { i in
+                            let x = fishWidth * CGFloat(i) / CGFloat(requestedCuts)
+                            DashedLine()
+                                .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
+                                .frame(width: 2, height: fishHeight)
+                                .offset(x: x - fishWidth/2)
                         }
                         
-                        // Knife area
-                        ZStack {
+                        // Cut marks
+                        ForEach(Array(fishCuts.enumerated()), id: \.offset) { index, cutPosition in
                             Rectangle()
-                                .fill(Color.clear)
-                                .frame(width: fishWidth, height: 60)
-                            
-                            // Moving knife
-                            if isKnifeMoving && !isCutting {
-                                Image("knife")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 150, height: 150)
-                                    .offset(x: knifePosition - fishWidth/2)
-                                    .animation(.none, value: knifePosition)
-                            }
-                            
-                            // Cutting knife animation
-                            if isCutting {
-                                Image("knife")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 80)
-                                    .offset(x: knifePosition - fishWidth/2, y: 20)
-                                    .animation(.easeInOut(duration: 0.3), value: isCutting)
-                            }
+                                .fill(Color.red)
+                                .frame(width: 3, height: fishHeight)
+                                .offset(x: cutPosition - fishWidth/2)
                         }
-                        
-                        // Cut indicators
-                        HStack {
-                            ForEach(0..<requestedCuts - 1, id: \.self) { index in
-                                Image(systemName: "scissors")
-                                    .font(.title2)
-                                    .foregroundColor(index < fishCuts.count ? .green : .gray)
-                                    .opacity(index < fishCuts.count ? 1.0 : 0.3)
-                            }
-                        }
-                        .padding(.top, 10)
+                    } else {
+                        // Cut fish result
+                        splitFishView()
                     }
                 }
-                .frame(height: 300)
                 
-                
-                Spacer()
-                
-                // Status and Score
-                VStack {
-                    Text(gameStatus)
-                        .font(.headline)
-                        .foregroundColor(.black)
-                    
-                    if showScore {
-                        VStack {
-                            // 🎯 Menampilkan customer image
-                            Image(customerIsSatisfied ? "person_\(currentCustomerIndex)_satisfied" : "person_\(currentCustomerIndex)_unsatisfied")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 120, height: 120)
-                            
-                            Text(customerIsSatisfied ? "Customer is satisfied!" : "Customer is not satisfied...")
-                                .font(.title2)
-                                .foregroundColor(customerIsSatisfied ? .green : .red)
-                                .padding(.top, 10)
-                            
-                            Button("Play Again") {
-                                resetGame()
-                            }
-                            .padding()
-                            .background(Color.orange)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                        }
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(15)
-                        .shadow(radius: 10)
+                // Moving knife + guide line
+                ZStack {
+                    // ✨ Garis panduan sejajar dengan pisau
+
+                    // Pisau
+                    if isKnifeMoving || isCutting || showCutResult {
+                        Image("knife")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 200, height: 200)
+                            .offset(x: knifePosition - fishWidth/2, y: -30)
+                            .animation(.none, value: knifePosition)
                     }
                 }
-                .padding()
+
                 
-                Spacer()
+                // Cut indicators
+                HStack(){
+                    ForEach(0..<requestedCuts - 1, id: \.self) { index in
+                        Image(systemName: "scissors")
+                            .font(.title2)
+                            .foregroundColor(index < fishCuts.count ? .green : .gray)
+                            .opacity(index < fishCuts.count ? 1.0 : 0.3)
+                    }
+                }
+                
+                Text(gameStatus)
+                    .font(.headline)
+                    .foregroundColor(.black)
+                    .padding(.vertical, 10)
+                
+                if showScore {
+                    Button("Play Again") {
+                        resetGame()
+                    }
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
             }
         }
         .onTapGesture {
             cutFish()
         }
         .onAppear {
+            if let tracker = trackers.first {
+                totalSatisfiedFromDB = tracker.totalSatisfied
+            } else {
+                // Jika belum ada data, buat satu
+                let newTracker = SatisfiedTracker(totalSatisfied: 0)
+                context.insert(newTracker)
+                try? context.save()
+                totalSatisfiedFromDB = 0
+            }
+
             prepareHaptics()
             startKnifeMovement()
         }
+
         .onReceive(timer) { _ in
             if timeRemaining > 0 {
                 timeRemaining -= 1
@@ -290,7 +261,7 @@ struct FishCuttingGameView: View {
                 showScore = true
                 isKnifeMoving = false
                 knifeTimer?.invalidate()
-                stopFishSound() // ✅ tambahkan ini!
+                stopFishSound()
             }
         }
     }
@@ -319,7 +290,7 @@ struct FishCuttingGameView: View {
                     .scaledToFit()
             }
         }
-        .frame(height: fishHeight)
+        .frame(height: 200)
     }
     
     func prepareHaptics() {
@@ -406,7 +377,7 @@ struct FishCuttingGameView: View {
             // ✅ Tunda sedikit agar garis merah kedua muncul dulu
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 showCutResult = true
-
+                
                 // ✅ Animasi customer keluar ke kanan
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation(.easeInOut(duration: 0.5)) {
@@ -414,7 +385,7 @@ struct FishCuttingGameView: View {
                         customerOpacity = 0
                     }
                 }
-
+                
                 // ✅ Delay untuk customer baru masuk
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                     if timeRemaining > 0 {
@@ -424,7 +395,7 @@ struct FishCuttingGameView: View {
                     }
                 }
             }
-
+            
         } else {
             // Feedback setelah potong pertama
             customerMessage = "One more cut!"
@@ -543,7 +514,13 @@ struct FishCuttingGameView: View {
         if customerIsSatisfied {
             satisfiedCount += 1
             triggerPlusOneAnimation()
+
+            if let tracker = trackers.first {
+                tracker.totalSatisfied += 1
+                try? context.save()
+            }
         }
+
         
         print("Requested cuts: \(requestedCuts)")
         print("Final Score: \(score)")
@@ -561,6 +538,7 @@ struct FishCuttingGameView: View {
     }
     
     func resetGame() {
+        isPlaying = false
         requestedCuts = Int.random(in: 2...4)
         customerMessage = "Please cut into \(requestedCuts)"
         timeRemaining = 60
@@ -602,5 +580,5 @@ struct DashedLine: Shape {
 }
 
 #Preview {
-    ContentView()
+    ContentView(isPlaying: .constant(true))
 }

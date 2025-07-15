@@ -50,8 +50,6 @@ struct FishCuttingGameView: View {
     @Environment(\.modelContext) private var context
     @Query var trackers: [SatisfiedTracker]
     @State private var totalSatisfiedFromDB = 0
-
-    
     
     // Timer
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -73,8 +71,6 @@ struct FishCuttingGameView: View {
             VStack (spacing: 0) {
                 // Header
                 HStack {
-                    
-                    
                         Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
                             .font(.title2)
                             .fontWeight(.bold)
@@ -196,8 +192,6 @@ struct FishCuttingGameView: View {
                 
                 // Moving knife + guide line
                 ZStack {
-                    // ✨ Garis panduan sejajar dengan pisau
-
                     // Pisau
                     if isKnifeMoving || isCutting || showCutResult {
                         Image("knife")
@@ -327,7 +321,6 @@ struct FishCuttingGameView: View {
         }
     }
     
-    
     func startKnifeMovement() {
         knifeTimer?.invalidate() // 🛑 Hentikan timer sebelumnya jika ada
         
@@ -348,7 +341,6 @@ struct FishCuttingGameView: View {
             }
         }
     }
-    
     
     func cutFish() {
         guard fishCuts.count < requestedCuts - 1,
@@ -492,7 +484,6 @@ struct FishCuttingGameView: View {
         }
     }
     
-    
     func calculateFinalScore() {
         guard fishCuts.count == requestedCuts - 1 else { return }
         
@@ -525,7 +516,6 @@ struct FishCuttingGameView: View {
         print("Requested cuts: \(requestedCuts)")
         print("Final Score: \(score)")
     }
-    
     
     func endGame() {
         knifeTimer?.invalidate()

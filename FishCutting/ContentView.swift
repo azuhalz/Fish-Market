@@ -12,7 +12,7 @@ struct ContentView: View {
 }
 
 struct FishCuttingGameView: View {
-    @State private var timeRemaining = 5
+    @State private var timeRemaining = 60
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = true
     @State private var fishCuts: [CGFloat] = []
@@ -53,11 +53,7 @@ struct FishCuttingGameView: View {
     @Environment(\.modelContext) private var context
     @Query var trackers: [SatisfiedTracker]
     @State private var totalSatisfiedFromDB = 0
-    
-    // Timer
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
-    // Animation timer for knife movement
     @State private var knifeTimer: Timer?
     
     let fishWidth: CGFloat = 230
@@ -67,12 +63,9 @@ struct FishCuttingGameView: View {
     
     var body: some View {
         ZStack {
-            // Background
-            Color.yellow.opacity(0.3)
-                .ignoresSafeArea()
+            Color.yellow.opacity(0.3).ignoresSafeArea()
             
-            VStack (spacing: 0) {
-                // Header
+            VStack(spacing: 0) {
                 HStack {
                     Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
                         .font(.body)
@@ -126,7 +119,6 @@ struct FishCuttingGameView: View {
                     .cornerRadius(20)
                     .shadow(radius: 5)
                 
-                // Person customer
                 Image("person_\(currentCustomerIndex)")
                     .resizable()
                     .scaledToFit()
@@ -141,7 +133,6 @@ struct FishCuttingGameView: View {
                             customerOffset = 300
                             fishOffsetX = 400
                             customerOpacity = 0
-                            
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 withAnimation(.easeOut(duration: 0.5)) {
                                     customerOffset = 0
@@ -208,7 +199,6 @@ struct FishCuttingGameView: View {
                         }
                 }
                 
-                // Moving knife + guide line
                 ZStack {
                     if isKnifeMoving || isCutting || showCutResult {
                         Image("knife")
@@ -251,6 +241,30 @@ struct FishCuttingGameView: View {
                 }
             }
         }
+        // .onTapGesture { cutFish() }
+        // .onChange(of: isPlaying, { oldValue, newValue in
+        //     if newValue {
+        //         if let tracker = trackers.first {
+        //             totalSatisfiedFromDB = tracker.totalSatisfied
+        //         } else {
+        //             let newTracker = SatisfiedTracker(totalSatisfied: 0)
+        //             context.insert(newTracker)
+        //             try? context.save()
+        //             totalSatisfiedFromDB = 0
+        //         }
+        //         prepareHaptics()
+        //         startKnifeMovement()
+        //     }
+        // })
+        // .onReceive(timer) { _ in
+        //     if isPlaying {
+        //         if timeRemaining > 0 {
+        //             timeRemaining -= 1
+        //         } else if !showScore {
+        //             showScore = true
+        //             isKnifeMoving = false
+        //             knifeTimer?.invalidate()
+        //             stopFishSound()
         .onTapGesture {
             cutFish()
         }
@@ -343,48 +357,48 @@ struct FishCuttingGameView: View {
         }
     }
     
-    
+
     func startKnifeMovement() {
         knifeTimer?.invalidate()
-        
         knifeTimer = Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true) { _ in
-            if isKnifeMoving {
-                knifePosition += 2 * knifeDirection
-                
-                let maxKnife = fishWidth
-                let minKnife: CGFloat = 0
-                
-                if knifePosition >= maxKnife {
-                    knifePosition = maxKnife
-                    knifeDirection = -1
-                } else if knifePosition <= minKnife {
-                    knifePosition = minKnife
-                    knifeDirection = 1
-                }
+            guard isKnifeMoving else { return }
+
+            // Speed up when timeRemaining is 10 or less
+            let speed: CGFloat = timeRemaining <= 10 ? 4.5 : 3
+
+            knifePosition += speed * knifeDirection
+            let maxKnife = fishWidth
+            let minKnife: CGFloat = 0
+
+            if knifePosition >= maxKnife {
+                knifePosition = maxKnife
+                knifeDirection = -1
+            } else if knifePosition <= minKnife {
+                knifePosition = minKnife
+                knifeDirection = 1
             }
         }
     }
-    
-    
+
     func cutFish() {
         guard fishCuts.count < requestedCuts - 1,
               timeRemaining > 0,
               !isCutting,
               roundInProgress,
               !showCutResult else { return }
-        
+
         playCutSound()
         playHapticCut()
-        
+
         isCutting = true
         isKnifeMoving = false
         fishCuts.append(knifePosition)
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             isCutting = false
             isKnifeMoving = true
         }
-        
+
         if fishCuts.count == requestedCuts - 1 {
             calculateFinalScore()
             roundInProgress = false
@@ -413,12 +427,11 @@ struct FishCuttingGameView: View {
                     }
                 }
             }
-            
         } else {
             customerMessage = "One more cut!"
         }
     }
-    
+
     func startNextRound() {
         fishCuts = []
         isCutting = false
@@ -433,11 +446,10 @@ struct FishCuttingGameView: View {
         
         fishRotation = 0
         fishVerticalOffset = 0
-        
-        fishOffsetX = 400
-        customerOffset = 300
+        animateFish()
+        customerOffset = -300
         customerOpacity = 0
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             withAnimation(.easeOut(duration: 0.5)) {
                 customerOffset = 0
@@ -461,39 +473,36 @@ struct FishCuttingGameView: View {
             }
         }
     }
-    
+
+//    func splitFishView() -> some View {
+//        HStack(spacing: 5) {
+//            ForEach(1...requestedCuts, id: \.self) { i in
+//                Image("fish_cut_\(i)")
+//                    .resizable()
+//                    .scaledToFit()
+//            }
+//        }
+//        .frame(height: 200)
+//    }
+
     func playCutSound() {
         if let soundURL = Bundle.main.url(forResource: "cut_sound", withExtension: "wav") {
-            do {
-                cutAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                cutAudioPlayer?.play()
-            } catch {
-                print("Gagal memutar suara: \(error.localizedDescription)")
-            }
+            cutAudioPlayer = try? AVAudioPlayer(contentsOf: soundURL)
+            cutAudioPlayer?.play()
         }
     }
     
     func stopFishSound() {
         fishAudioPlayer?.stop()
     }
-    
+
     func animateFish() {
         withAnimation(Animation.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
             fishRotation = 10
             fishVerticalOffset = 10
         }
     }
-    
-    func playPlusOneSound() {
-        if let url = Bundle.main.url(forResource: "point_up", withExtension: "wav") {
-            do {
-                plusOnePlayer = try AVAudioPlayer(contentsOf: url)
-                plusOnePlayer?.play()
-            } catch {
-                print("Gagal play plus one sound: \(error.localizedDescription)")
-            }
-        }
-    }
+
     
     func triggerPlusOneAnimation() {
         showPlusOne = true
@@ -515,8 +524,6 @@ struct FishCuttingGameView: View {
     }
     
     func calculateFinalScore() {
-        guard fishCuts.count == requestedCuts - 1 else { return }
-        
         let sortedCuts = fishCuts.sorted()
         var totalScore: CGFloat = 0
 
@@ -556,6 +563,17 @@ struct FishCuttingGameView: View {
         }
     }
     
+    func playPlusOneSound() {
+        if let url = Bundle.main.url(forResource: "point_up", withExtension: "wav") {
+            do {
+                plusOnePlayer = try AVAudioPlayer(contentsOf: url)
+                plusOnePlayer?.play()
+            } catch {
+                print("Gagal play plus one sound: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func endGame() {
         knifeTimer?.invalidate()
         isKnifeMoving = false
@@ -570,7 +588,7 @@ struct FishCuttingGameView: View {
         isPlaying = false
         requestedCuts = Int.random(in: 2...4)
         customerMessage = "Please cut into \(requestedCuts)"
-        timeRemaining = 5
+        timeRemaining = 60
         fishCuts = []
         score = 0
         satisfiedCount = 0
@@ -607,6 +625,7 @@ struct DashedLine: Shape {
     }
 }
 
+
 #Preview {
-    ContentView(isPlaying: .constant(true))
+    ContentView(isPlaying: .constant(false))
 }

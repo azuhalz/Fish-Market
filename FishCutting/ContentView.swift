@@ -12,7 +12,7 @@ struct ContentView: View {
 }
 
 struct FishCuttingGameView: View {
-    @State private var timeRemaining = 60
+    @State private var timeRemaining = 5
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = true
     @State private var fishCuts: [CGFloat] = []
@@ -25,6 +25,7 @@ struct FishCuttingGameView: View {
     @State private var knifeDirection: CGFloat = 1
     @State private var cutAudioPlayer: AVAudioPlayer?
     @State private var fishAudioPlayer: AVAudioPlayer?
+    @State private var bgAudioPlayer: AVAudioPlayer?
     @State private var hasPlayedFishSound = false
     @State private var fishRotation: Double = 0
     @State private var fishVerticalOffset: CGFloat = 0
@@ -59,8 +60,8 @@ struct FishCuttingGameView: View {
     // Animation timer for knife movement
     @State private var knifeTimer: Timer?
     
-    let fishWidth: CGFloat = 300
-    let fishHeight: CGFloat = 150
+    let fishWidth: CGFloat = 230
+    let fishHeight: CGFloat = 115
     // Membagi ikan menjadi 3 bagian sama rata (1/3 dan 2/3)
     let targetCuts: [CGFloat] = [100, 200] // fishWidth/3 dan 2*fishWidth/3
     
@@ -113,6 +114,8 @@ struct FishCuttingGameView: View {
                 }
                 .padding(20)
                 
+                Spacer()
+                
                 // Instructions
                 Text(customerMessage)
                     .font(.title2)
@@ -127,7 +130,7 @@ struct FishCuttingGameView: View {
                 Image("person_\(currentCustomerIndex)")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 150, height: 150)
+                    .frame(width: 200, height: 200)
                     .offset(x: customerOffset)
                     .opacity(customerOpacity)
                     .animation(.easeOut(duration: 0.5), value: customerOffset)
@@ -149,12 +152,14 @@ struct FishCuttingGameView: View {
                         }
                     }
                 
+                Spacer()
+                
                 ZStack {
                     if !showCutResult {
                         Image("cut_board")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 350, height: 200)
+                            .frame(width: 330, height: 165)
                         
                         Image("fish\(currentFishIndex)")
                             .resizable()
@@ -165,7 +170,6 @@ struct FishCuttingGameView: View {
                             .onAppear {
                                 if !hasPlayedFishSound {
                                     hasPlayedFishSound = true
-                                    playFishSound()
                                     animateFish()  // Start animation on the first appearance
                                 }
                             }
@@ -210,26 +214,31 @@ struct FishCuttingGameView: View {
                         Image("knife")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 200, height: 200)
-                            .offset(x: knifePosition - fishWidth/2, y: -30)
+                            .frame(width: 200, height: 300)
+                            .offset(x: knifePosition - fishWidth/2, y: -130)
                             .animation(.none, value: knifePosition)
                     }
                 }
                 
                 // Cut indicators
-                HStack(){
-                    ForEach(0..<requestedCuts - 1, id: \.self) { index in
-                        Image(systemName: "scissors")
-                            .font(.title2)
-                            .foregroundColor(index < fishCuts.count ? .green : .gray)
-                            .opacity(index < fishCuts.count ? 1.0 : 0.3)
-                    }
-                }
+//                HStack(){
+//                    ForEach(0..<requestedCuts - 1, id: \.self) { index in
+//                        Image("knife")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 60, height: 60)
+//                            .rotationEffect(Angle(degrees: -45))
+//                            .foregroundColor(index < fishCuts.count ? .green : .gray)
+//                            .opacity(index < fishCuts.count ? 1.0 : 0.3)
+//                    }
+//                }
+//                
+//                Text(gameStatus)
+//                    .font(.headline)
+//                    .foregroundColor(.black)
+//                    .padding(.vertical, 10)
                 
-                Text(gameStatus)
-                    .font(.headline)
-                    .foregroundColor(.black)
-                    .padding(.vertical, 10)
+                Spacer()
                 
                 if showScore {
                     Button("Play Again") {
@@ -259,6 +268,7 @@ struct FishCuttingGameView: View {
 
             prepareHaptics()
             startKnifeMovement()
+            playBackgroundMusic()
         }
         .onReceive(timer) { _ in
             if timeRemaining > 0 {
@@ -296,7 +306,7 @@ struct FishCuttingGameView: View {
                     .scaledToFit()
             }
         }
-        .frame(height: 200)
+        .frame(height: 165)
     }
     
     func prepareHaptics() {
@@ -441,6 +451,17 @@ struct FishCuttingGameView: View {
         }
     }
     
+    func playBackgroundMusic() {
+        if let soundURL = Bundle.main.url(forResource: "background_music", withExtension: "mp3") {
+            do {
+                bgAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                bgAudioPlayer?.play()
+            } catch {
+                print("Gagal memutar suara: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func playCutSound() {
         if let soundURL = Bundle.main.url(forResource: "cut_sound", withExtension: "wav") {
             do {
@@ -448,18 +469,6 @@ struct FishCuttingGameView: View {
                 cutAudioPlayer?.play()
             } catch {
                 print("Gagal memutar suara: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func playFishSound() {
-        if let soundURL = Bundle.main.url(forResource: "fish_shaking", withExtension: "wav") {
-            do {
-                fishAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                fishAudioPlayer?.numberOfLoops = -1
-                fishAudioPlayer?.play()
-            } catch {
-                print("Gagal memutar suara ikan: \(error.localizedDescription)")
             }
         }
     }
@@ -561,7 +570,7 @@ struct FishCuttingGameView: View {
         isPlaying = false
         requestedCuts = Int.random(in: 2...4)
         customerMessage = "Please cut into \(requestedCuts)"
-        timeRemaining = 60
+        timeRemaining = 5
         fishCuts = []
         score = 0
         satisfiedCount = 0
@@ -573,7 +582,6 @@ struct FishCuttingGameView: View {
         currentFishIndex = Int.random(in: 1...5)
         currentCustomerIndex = Int.random(in: 1...3)
         isKnifeMoving = true
-        playFishSound()
         fishRotation = 0
         fishVerticalOffset = 0
         animateFish()

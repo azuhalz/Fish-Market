@@ -25,6 +25,7 @@ struct FishCuttingGameView: View {
     @State private var knifeDirection: CGFloat = 1
     @State private var cutAudioPlayer: AVAudioPlayer?
     @State private var fishAudioPlayer: AVAudioPlayer?
+    @State private var bgAudioPlayer: AVAudioPlayer?
     @State private var hasPlayedFishSound = false
     @State private var fishRotation: Double = 0
     @State private var fishVerticalOffset: CGFloat = 0
@@ -424,8 +425,8 @@ struct FishCuttingGameView: View {
     func playBackgroundMusic() {
         if let soundURL = Bundle.main.url(forResource: "background_music", withExtension: "mp3") {
             do {
-                cutAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                cutAudioPlayer?.play()
+                bgAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                bgAudioPlayer?.play()
             } catch {
                 print("Gagal memutar suara: \(error.localizedDescription)")
             }
@@ -560,7 +561,6 @@ struct FishCuttingGameView: View {
         fishVerticalOffset = 0
         animateFish()
         startKnifeMovement()
-        playBackgroundMusic()
         customerOffset = -300 // lebih jauh agar jelas dari kiri
         customerOpacity = 0
         

@@ -1,38 +1,37 @@
 import SwiftUI
 import SwiftData
 
-struct LandingView: View {
-    @State private var isPlaying = false
+struct LandingPage: View {
     @Query var trackers: [SatisfiedTracker]
+    @State private var showHintView = false
 
     var total: Int {
         trackers.first?.totalSatisfied ?? 0
     }
 
     var body: some View {
-        ZStack{
-            Color.yellow.opacity(0.3)
-                .ignoresSafeArea()
-            
-            if isPlaying {
-                ContentView(isPlaying: $isPlaying)
+        ZStack {
+            if showHintView {
+                NavigationHintView()
             } else {
+                Color.yellow.opacity(0.3)
+                    .ignoresSafeArea()
+
                 VStack(spacing: 20) {
                     Text("Total satisfied customer: \(total)")
                         .font(.title)
                         .foregroundColor(.orange)
-                    
+
                     Button {
-                        isPlaying = true
+                        showHintView = true
                     } label: {
-                        VStack{
+                        VStack {
                             Image(systemName: "play.fill")
                                 .resizable()
                                 .frame(width: 60, height: 60)
                                 .foregroundColor(.orange.opacity(0.8))
                             Text("Play")
-//                                .font(.system(size: 40))
-                                .font(.custom("georgia", size: 40))
+                                .font(.custom("Georgia", size: 40))
                                 .bold()
                                 .foregroundColor(.orange.opacity(0.8))
                         }
@@ -44,5 +43,6 @@ struct LandingView: View {
 }
 
 #Preview {
-    LandingView()
+    LandingPage()
 }
+

@@ -11,7 +11,7 @@ import SwiftUI
 struct FishCuttingApp: App {
     var body: some Scene {
         WindowGroup {
-            LandingView()
+            LandingPage()
                 .preferredColorScheme(.light)
         }
         .modelContainer(for: SatisfiedTracker.self)

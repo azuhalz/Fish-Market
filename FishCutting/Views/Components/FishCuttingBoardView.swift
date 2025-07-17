@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct FishCuttingBoardView: View {
+    @Binding var showDashedLines: Bool
+    
     let showCutResult: Bool
     let currentFishIndex: Int
     let fishRotation: Double
@@ -29,18 +31,27 @@ struct FishCuttingBoardView: View {
                         .offset(x: fishOffsetX, y: -5)
                         .onAppear {
                             onFishAppear()
+                            
+                            // Delay showing the dashed lines
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                withAnimation {
+                                    showDashedLines = true
+                                }
+                            }
                         }
                         .onChange(of: currentFishIndex) { _ in
                             onFishIndexChange()
                         }
                     
                     // Dash lines for the cuts
-                    ForEach(1..<requestedCuts, id: \.self) { i in
-                        let x = GameConstants.fishWidth * CGFloat(i) / CGFloat(requestedCuts)
-                        DashedLine()
-                            .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
-                            .frame(width: 2, height: GameConstants.fishHeight)
-                            .offset(x: x - GameConstants.fishWidth/2)
+                    if showDashedLines {
+                        ForEach(1..<requestedCuts, id: \.self) { i in
+                            let x = GameConstants.fishWidth * CGFloat(i) / CGFloat(requestedCuts)
+                            DashedLine()
+                                .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
+                                .frame(width: 2, height: GameConstants.fishHeight)
+                                .offset(x: x - GameConstants.fishWidth/2)
+                        }
                     }
                     
                     // Cut marks
@@ -71,9 +82,12 @@ struct FishCuttingBoardView: View {
 }
 
 #Preview {
+    @State var showDashedLines = false
+    
     VStack {
         // Preview with fish and cutting board
         FishCuttingBoardView(
+            showDashedLines: $showDashedLines,
             showCutResult: false,
             currentFishIndex: 1,
             fishRotation: 5.0,
@@ -91,6 +105,7 @@ struct FishCuttingBoardView: View {
         
         // Preview with cut result
         FishCuttingBoardView(
+            showDashedLines: $showDashedLines,
             showCutResult: true,
             currentFishIndex: 1,
             fishRotation: 0,

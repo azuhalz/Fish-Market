@@ -26,7 +26,7 @@ struct FishCuttingBoardView: View {
                         .scaledToFit()
                         .frame(width: GameConstants.fishWidth, height: GameConstants.fishHeight)
                         .rotationEffect(.degrees(fishRotation))
-                        .offset(x: fishOffsetX, y: fishVerticalOffset)
+                        .offset(x: fishOffsetX, y: -5)
                         .onAppear {
                             onFishAppear()
                         }

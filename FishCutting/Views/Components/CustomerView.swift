@@ -12,14 +12,18 @@ struct CustomerView: View {
     
     var body: some View {
         VStack {
-            Text(customerMessage)
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundColor(.black)
-                .padding()
-                .background(Color.white)
-                .cornerRadius(20)
-                .shadow(radius: 5)
+            ZStack {
+                Image("text_bubble")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 300, height: 100)
+                    .offset(y: 8)
+                
+                Text(customerMessage)
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundColor(.black)
+            }
             
             Image("person_\(currentCustomerIndex)")
                 .resizable()

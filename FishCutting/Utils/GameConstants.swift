@@ -2,9 +2,9 @@ import Foundation
 import CoreGraphics
 
 struct GameConstants {
-    static let fishWidth: CGFloat = 230
-    static let fishHeight: CGFloat = 115
-    static let gameDuration = 60
+    static let fishWidth: CGFloat = 275
+    static let fishHeight: CGFloat = 130
+    static let gameDuration = 10
     static let knifeUpdateInterval: TimeInterval = 0.02
     static let normalKnifeSpeed: CGFloat = 3
     static let fastKnifeSpeed: CGFloat = 4.5

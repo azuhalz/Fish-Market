@@ -13,7 +13,7 @@ struct KnifeView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 200, height: 300)
-                    .offset(x: knifePosition - GameConstants.fishWidth/2, y: -130)
+                    .offset(x: knifePosition - GameConstants.fishWidth/2, y: 110)
                     .animation(.none, value: knifePosition)
             }
         }

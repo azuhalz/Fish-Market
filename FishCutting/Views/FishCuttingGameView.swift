@@ -74,34 +74,36 @@ struct FishCuttingGameView: View {
                     }
                 )
                 
-                Spacer()
+//                Spacer()
                 
-                FishCuttingBoardView(
-                    showCutResult: showCutResult,
-                    currentFishIndex: currentFishIndex,
-                    fishRotation: fishRotation,
-                    fishOffsetX: fishOffsetX,
-                    fishVerticalOffset: fishVerticalOffset,
-                    requestedCuts: requestedCuts,
-                    fishCuts: fishCuts,
-                    hasPlayedFishSound: hasPlayedFishSound,
-                    onFishAppear: {
-                        if !hasPlayedFishSound {
-                            hasPlayedFishSound = true
-                            animateFish()
+                ZStack {
+                    FishCuttingBoardView(
+                        showCutResult: showCutResult,
+                        currentFishIndex: currentFishIndex,
+                        fishRotation: fishRotation,
+                        fishOffsetX: fishOffsetX,
+                        fishVerticalOffset: fishVerticalOffset,
+                        requestedCuts: requestedCuts,
+                        fishCuts: fishCuts,
+                        hasPlayedFishSound: hasPlayedFishSound,
+                        onFishAppear: {
+                            if !hasPlayedFishSound {
+                                hasPlayedFishSound = true
+                                animateFish()
+                            }
+                        },
+                        onFishIndexChange: {
+                            resetFishAnimation()
                         }
-                    },
-                    onFishIndexChange: {
-                        resetFishAnimation()
-                    }
-                )
-                
-                KnifeView(
-                    isKnifeMoving: isKnifeMoving,
-                    isCutting: isCutting,
-                    showCutResult: showCutResult,
-                    knifePosition: knifePosition
-                )
+                    )
+                    
+                    KnifeView(
+                        isKnifeMoving: isKnifeMoving,
+                        isCutting: isCutting,
+                        showCutResult: showCutResult,
+                        knifePosition: knifePosition
+                    )
+                }
                 
                 Spacer()
                 
@@ -114,6 +116,8 @@ struct FishCuttingGameView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
+                
+                Spacer()
             }
         }
         .onTapGesture {
@@ -143,6 +147,32 @@ struct FishCuttingGameView: View {
         hapticManager.prepareHaptics()
         startKnifeMovement()
         audioManager.playBackgroundMusic()
+        showFirstCustomer()
+    }
+    
+    // MARK: - First Customer Animation
+    private func showFirstCustomer() {
+        // Reset positions
+        customerOffset = -300
+        fishOffsetX = 400
+        customerOpacity = 0
+        
+        // Animate customer and fish entrance
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.easeOut(duration: 0.5)) {
+                customerOffset = 0
+                fishOffsetX = 0
+                customerOpacity = 1
+            }
+        }
+        
+        // Start fish animation after entrance
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            animateFish()
+        }
+        
+        // Mark first customer as shown
+        hasShownFirstCustomer = true
     }
     
     // MARK: - Timer Handling

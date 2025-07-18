@@ -1,4 +1,5 @@
 import CoreHaptics
+import SwiftUI
 
 class HapticManager: ObservableObject {
     private var hapticEngine: CHHapticEngine?

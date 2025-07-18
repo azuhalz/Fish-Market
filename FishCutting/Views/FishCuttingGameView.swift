@@ -165,6 +165,30 @@ struct FishCuttingGameView: View {
         showFirstCustomer()
     }
     
+    // MARK: - Game Haptics
+    func playCutHaptic() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
+        generator.impactOccurred()
+    }
+    
+    // MARK: - Unsatisfied Haptics
+    func playUnsatisfiedHaptic() {
+        let notificationGenerator = UINotificationFeedbackGenerator()
+        notificationGenerator.prepare()
+        notificationGenerator.notificationOccurred(.error)
+        
+        let impact = UIImpactFeedbackGenerator(style: .heavy)
+        impact.prepare()
+        
+        // Simulate a "buzz" by repeating the impact
+        for i in 0..<5 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.1) {
+                impact.impactOccurred()
+            }
+        }
+    }
+
     // MARK: - First Customer Animation
     private func showFirstCustomer() {
         // Reset positions
@@ -269,10 +293,8 @@ struct FishCuttingGameView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             cutParticles.removeValue(forKey: id)
         }
-
-        
         audioManager.playCutSound()
-        hapticManager.playHapticCut()
+        playCutHaptic()
         
         isCutting = true
         isKnifeMoving = false
@@ -296,9 +318,14 @@ struct FishCuttingGameView: View {
         customerState = customerIsSatisfied ? .satisfied : .unsatisfied
         customerMessage = customerIsSatisfied ? "Thank you" : "It's so bad"
         
+        // Trigger haptic when customer is unsatisfied
+        if !customerIsSatisfied {
+            playUnsatisfiedHaptic()
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             showCutResult = true
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation(.easeInOut(duration: 0.5)) {
                     customerOffset = -300

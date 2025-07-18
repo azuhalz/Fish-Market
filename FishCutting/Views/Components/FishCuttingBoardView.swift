@@ -13,60 +13,92 @@ struct FishCuttingBoardView: View {
     let onFishIndexChange: () -> Void
     
     var body: some View {
-        ZStack {
-            if !showCutResult {
-                Image("cut_board")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 330, height: 165)
-                
-                ZStack {
-                    Image("fish\(currentFishIndex)")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: GameConstants.fishWidth, height: GameConstants.fishHeight)
-                        .rotationEffect(.degrees(fishRotation))
-                        .offset(x: fishOffsetX, y: -5)
-                        .onAppear {
-                            onFishAppear()
-                        }
-                        .onChange(of: currentFishIndex) { _ in
-                            onFishIndexChange()
-                        }
-                    
-                    // Dash lines for the cuts
-                    ForEach(1..<requestedCuts, id: \.self) { i in
-                        let x = GameConstants.fishWidth * CGFloat(i) / CGFloat(requestedCuts)
-                        DashedLine()
-                            .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
-                            .frame(width: 2, height: GameConstants.fishHeight)
-                            .offset(x: x - GameConstants.fishWidth/2)
-                    }
-                    
-                    // Cut marks
-                    ForEach(Array(fishCuts.enumerated()), id: \.offset) { index, cutPosition in
-                        Rectangle()
-                            .fill(Color.red)
-                            .frame(width: 3, height: GameConstants.fishHeight)
-                            .offset(x: cutPosition - GameConstants.fishWidth/2)
-                    }
+        GeometryReader { geo in
+            ZStack {
+                if !showCutResult {
+                    originalFishView(width: geo.size.width)
+                } else {
+                    splitFishView(width: geo.size.width)
                 }
-            } else {
-                splitFishView()
             }
         }
     }
     
     @ViewBuilder
-    private func splitFishView() -> some View {
-        HStack(spacing: 5) {
-            ForEach(1...requestedCuts, id: \.self) { i in
-                Image("fish_cut_\(i)")
+    private func originalFishView(width: CGFloat) -> some View {
+        ZStack {
+            Image("cut_board")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 330, height: 165)
+            
+            ZStack {
+                Image("fish\(currentFishIndex)")
                     .resizable()
                     .scaledToFit()
+                    .frame(width: GameConstants.fishWidth, height: GameConstants.fishHeight)
+                    .rotationEffect(.degrees(fishRotation))
+                    .offset(x: fishOffsetX, y: -5)
+                    .onAppear {
+                        onFishAppear()
+                    }
+                    .onChange(of: currentFishIndex) { _ in
+                        onFishIndexChange()
+                    }
+                
+                // Dash lines for the cuts
+                ForEach(1..<requestedCuts, id: \.self) { i in
+                    let x = GameConstants.fishWidth * CGFloat(i) / CGFloat(requestedCuts)
+                    DashedLine()
+                        .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
+                        .frame(width: 2, height: GameConstants.fishHeight)
+                        .offset(x: x - GameConstants.fishWidth/2)
+                }
+                
+                // Cut marks
+                ForEach(Array(fishCuts.enumerated()), id: \.offset) { index, cutPosition in
+                    Rectangle()
+                        .fill(Color.red)
+                        .frame(width: 3, height: GameConstants.fishHeight)
+                        .offset(x: cutPosition - GameConstants.fishWidth/2)
+                }
+            }
+        }.frame(width: width)
+    }
+    
+    private func splitFishView(width: CGFloat) -> some View {
+        let sortedCuts = ([0] + fishCuts + [GameConstants.fishWidth]).sorted()
+        let totalPieces = sortedCuts.count - 1
+        let spacing: CGFloat = 0.5
+        let pieceWidth: CGFloat = 20
+
+        let totalWidth = CGFloat(totalPieces) * pieceWidth + CGFloat(totalPieces - 1) * spacing
+        let startX = (width - totalWidth) / 2
+
+        return ZStack {
+            ForEach(0..<totalPieces, id: \.self) { i in
+                let left = sortedCuts[i]
+                let right = sortedCuts[i + 1]
+                let segmentWidth = right - left
+                let maskCenter = (left + right) / 2
+
+                if segmentWidth >= 10 {
+                    let xOffset = startX + CGFloat(i) * (pieceWidth + spacing)
+
+                    Image("fish\(currentFishIndex)")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: GameConstants.fishWidth, height: GameConstants.fishHeight)
+                        .mask(
+                            Rectangle()
+                                .frame(width: segmentWidth + 2, height: GameConstants.fishHeight)
+                                .offset(x: maskCenter - GameConstants.fishWidth / 2)
+                        )
+                        .offset(x: xOffset - width / 2, y: fishVerticalOffset + 25)
+                }
             }
         }
-        .frame(height: 165)
+        .frame(width: width, height: GameConstants.fishHeight)
     }
 }
 

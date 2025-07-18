@@ -33,6 +33,7 @@ struct FishCuttingGameView: View {
     @State private var requestedCuts = 3
     @State private var currentHighScore = 0
     @State private var isAnimatingFish = false
+    @State private var customerState: CustomerState = .asking
     @State private var showDashedLines = false
     
     @Binding var isPlaying: Bool
@@ -66,6 +67,7 @@ struct FishCuttingGameView: View {
                 CustomerView(
                     customerMessage: customerMessage,
                     currentCustomerIndex: currentCustomerIndex,
+                    customerState: customerState,
                     customerOffset: customerOffset,
                     customerOpacity: customerOpacity,
                     hasShownFirstCustomer: hasShownFirstCustomer,
@@ -271,6 +273,7 @@ struct FishCuttingGameView: View {
     private func finishCutting() {
         calculateFinalScore()
         roundInProgress = false
+        customerState = customerIsSatisfied ? .satisfied : .unsatisfied
         customerMessage = customerIsSatisfied ? "Thank you" : "It's so bad"
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -349,6 +352,7 @@ struct FishCuttingGameView: View {
         isCutting = false
         showCutResult = false
         roundInProgress = true
+        customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
         customerMessage = "Please cut into \(requestedCuts)"
         currentCustomerIndex = Int.random(in: 1...GameConstants.maxCustomers)
@@ -392,6 +396,7 @@ struct FishCuttingGameView: View {
         
     private func resetGame() {
         isPlaying = false
+        customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
         customerMessage = "Please cut into \(requestedCuts)"
         timeRemaining = GameConstants.gameDuration
@@ -405,6 +410,8 @@ struct FishCuttingGameView: View {
         knifePosition = 0
         currentFishIndex = Int.random(in: 1...GameConstants.maxFishTypes)
         currentCustomerIndex = Int.random(in: 1...GameConstants.maxCustomers)
+        hasShownFirstCustomer = false
+        customerIsSatisfied = false
         isKnifeMoving = true
         fishRotation = 0
         fishVerticalOffset = 0

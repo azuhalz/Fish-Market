@@ -7,18 +7,18 @@ class AudioManager: ObservableObject {
     private var plusOnePlayer: AVAudioPlayer?
     
     func playBackgroundMusic() {
-        guard let soundURL = Bundle.main.url(forResource: "background_music", withExtension: "mp3") else {
-            print("Background music file not found")
-            return
-        }
-        
-        do {
-            bgAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-            bgAudioPlayer?.numberOfLoops = -1 // Loop indefinitely
-            bgAudioPlayer?.play()
-        } catch {
-            print("Failed to play background music: \(error.localizedDescription)")
-        }
+//        guard let soundURL = Bundle.main.url(forResource: "background_music", withExtension: "mp3") else {
+//            print("Background music file not found")
+//            return
+//        }
+//        
+//        do {
+//            bgAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+//            bgAudioPlayer?.numberOfLoops = -1 // Loop indefinitely
+//            bgAudioPlayer?.play()
+//        } catch {
+//            print("Failed to play background music: \(error.localizedDescription)")
+//        }
     }
     
     func playCutSound() {

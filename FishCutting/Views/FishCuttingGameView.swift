@@ -2,7 +2,7 @@ import SwiftUI
 import _SwiftData_SwiftUI
 
 struct FishCuttingGameView: View {
-    @State private var timeRemaining = GameConstants.gameDuration
+    @State private var timeRemaining = 10
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = true
     @State private var fishCuts: [CGFloat] = []
@@ -34,6 +34,8 @@ struct FishCuttingGameView: View {
     @State private var currentHighScore = 0
     @State private var isAnimatingFish = false
     @State private var cutParticles: [UUID: CGPoint] = [:]
+    @State private var customerState: CustomerState = .asking
+    @State private var showDashedLines = false
     
     @Binding var isPlaying: Bool
     
@@ -68,6 +70,7 @@ struct FishCuttingGameView: View {
                 CustomerView(
                     customerMessage: customerMessage,
                     currentCustomerIndex: currentCustomerIndex,
+                    customerState: customerState,
                     customerOffset: customerOffset,
                     customerOpacity: customerOpacity,
                     hasShownFirstCustomer: hasShownFirstCustomer,
@@ -79,6 +82,7 @@ struct FishCuttingGameView: View {
                 
                 ZStack {
                     FishCuttingBoardView(
+                        showDashedLines: $showDashedLines,
                         showCutResult: showCutResult,
                         currentFishIndex: currentFishIndex,
                         fishRotation: fishRotation,
@@ -164,9 +168,10 @@ struct FishCuttingGameView: View {
     // MARK: - First Customer Animation
     private func showFirstCustomer() {
         // Reset positions
-        customerOffset = -300
+        customerOffset = 300
         fishOffsetX = 400
         customerOpacity = 0
+        showDashedLines = false // Ensure it starts hidden
         
         // Animate customer and fish entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -180,6 +185,13 @@ struct FishCuttingGameView: View {
         // Start fish animation after entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             animateFish()
+        }
+        
+        // Show dashed lines after fish settles
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            withAnimation(.easeIn(duration: 0.3)) {
+                showDashedLines = true
+            }
         }
         
         // Mark first customer as shown
@@ -281,6 +293,7 @@ struct FishCuttingGameView: View {
     private func finishCutting() {
         calculateFinalScore()
         roundInProgress = false
+        customerState = customerIsSatisfied ? .satisfied : .unsatisfied
         customerMessage = customerIsSatisfied ? "Thank you" : "It's so bad"
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -288,7 +301,7 @@ struct FishCuttingGameView: View {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation(.easeInOut(duration: 0.5)) {
-                    customerOffset = 300
+                    customerOffset = -300
                     fishOffsetX = 400
                     customerOpacity = 0
                 }
@@ -359,17 +372,19 @@ struct FishCuttingGameView: View {
         isCutting = false
         showCutResult = false
         roundInProgress = true
+        customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
         customerMessage = "Please cut into \(requestedCuts)"
         currentCustomerIndex = Int.random(in: 1...GameConstants.maxCustomers)
         currentFishIndex = Int.random(in: 1...GameConstants.maxFishTypes)
         knifePosition = 0
         isKnifeMoving = true
-        
+        showDashedLines = false // Reset dashed lines
         resetFishAnimation()
-        customerOffset = -300
+        customerOffset = 300
         customerOpacity = 0
         
+        // Animate customer and fish entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             withAnimation(.easeOut(duration: 0.5)) {
                 customerOffset = 0
@@ -378,8 +393,16 @@ struct FishCuttingGameView: View {
             }
         }
         
+        // Start fish animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             animateFish()
+        }
+        
+        // Show dashed lines after fish settles - increased delay for consistency
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            withAnimation(.easeIn(duration: 0.3)) {
+                showDashedLines = true
+            }
         }
     }
     
@@ -390,9 +413,10 @@ struct FishCuttingGameView: View {
         knifeTimer?.invalidate()
         audioManager.stopFishSound()
     }
-    
+        
     private func resetGame() {
         isPlaying = false
+        customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
         customerMessage = "Please cut into \(requestedCuts)"
         timeRemaining = GameConstants.gameDuration
@@ -406,20 +430,36 @@ struct FishCuttingGameView: View {
         knifePosition = 0
         currentFishIndex = Int.random(in: 1...GameConstants.maxFishTypes)
         currentCustomerIndex = Int.random(in: 1...GameConstants.maxCustomers)
+        hasShownFirstCustomer = false
+        customerIsSatisfied = false
         isKnifeMoving = true
         fishRotation = 0
         fishVerticalOffset = 0
-        animateFish()
-        startKnifeMovement()
-        customerOffset = -300
+        showDashedLines = false // Reset dashed lines
+        customerOffset = 300
         customerOpacity = 0
         
+        // Animate entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             withAnimation(.easeOut(duration: 0.5)) {
                 customerOffset = 0
                 customerOpacity = 1
             }
         }
+        
+        // Start fish animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            animateFish()
+        }
+        
+        // Show dashed lines with proper timing
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            withAnimation(.easeIn(duration: 0.3)) {
+                showDashedLines = true
+            }
+        }
+        
+        startKnifeMovement()
     }
 }
 

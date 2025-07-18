@@ -33,6 +33,7 @@ struct FishCuttingGameView: View {
     @State private var requestedCuts = 3
     @State private var currentHighScore = 0
     @State private var isAnimatingFish = false
+    @State private var cutParticles: [UUID: CGPoint] = [:]
     @State private var customerState: CustomerState = .asking
     @State private var showDashedLines = false
     
@@ -51,8 +52,10 @@ struct FishCuttingGameView: View {
     
     var body: some View {
         ZStack {
+            // Background
             Color.yellow.opacity(0.3).ignoresSafeArea()
             
+            // Main Game Content
             VStack(spacing: 0) {
                 GameHeaderView(
                     timeRemaining: timeRemaining,
@@ -76,8 +79,6 @@ struct FishCuttingGameView: View {
                         hasShownFirstCustomer = true
                     }
                 )
-                
-//                Spacer()
                 
                 ZStack {
                     FishCuttingBoardView(
@@ -108,20 +109,30 @@ struct FishCuttingGameView: View {
                         knifePosition: knifePosition
                     )
                 }
+                .overlay(
+                    ZStack {
+                        ForEach(cutParticles.keys.sorted(), id: \.self) { key in
+                            if let pos = cutParticles[key] {
+                                CutParticleView(position: pos)
+                            }
+                        }
+                    }
+                        .allowsHitTesting(false)
+                )
                 
                 Spacer()
-                
-                if showScore {
-                    Button("Play Again") {
+            }
+            
+            // ✅ Game Over FULL Overlay Layer
+            if showScore {
+                ZStack {
+                    Color.black.opacity(0.6).ignoresSafeArea()
+                    GameOverView(Highscore: score, satisfiedCount: satisfiedCount) {
                         resetGame()
                     }
-                    .padding()
-                    .background(Color.orange)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
                 }
-                
-                Spacer()
+                .transition(.opacity)
+                .zIndex(10)
             }
         }
         .onTapGesture {
@@ -150,7 +161,7 @@ struct FishCuttingGameView: View {
         
         hapticManager.prepareHaptics()
         startKnifeMovement()
-        audioManager.playBackgroundMusic()
+        //audioManager.playBackgroundMusic()
         showFirstCustomer()
     }
     
@@ -250,6 +261,15 @@ struct FishCuttingGameView: View {
               !isCutting,
               roundInProgress,
               !showCutResult else { return }
+
+        // When cutting:
+        let id = UUID()
+        cutParticles[id] = CGPoint(x: knifePosition + 27, y: 120) // Adjust Y for your fish
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            cutParticles.removeValue(forKey: id)
+        }
+
         
         audioManager.playCutSound()
         hapticManager.playHapticCut()

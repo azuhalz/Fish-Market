@@ -57,7 +57,8 @@ struct FishCuttingBoardView: View {
                     // Cut marks
                     ForEach(Array(fishCuts.enumerated()), id: \.offset) { index, cutPosition in
                         Rectangle()
-                            .fill(Color.red)
+                            .fill(Color.black)
+                            .opacity(0.3)
                             .frame(width: 3, height: GameConstants.fishHeight)
                             .offset(x: cutPosition - GameConstants.fishWidth/2)
                     }

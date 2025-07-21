@@ -56,7 +56,7 @@ struct FishCuttingGameView: View {
             Color.yellow.opacity(0.3).ignoresSafeArea()
             
             // Main Game Content
-            VStack(spacing: 0) {
+            VStack(spacing: 20) {
                 GameHeaderView(
                     timeRemaining: timeRemaining,
                     currentHighScore: currentHighScore,
@@ -65,20 +65,27 @@ struct FishCuttingGameView: View {
                     plusOneOffset: plusOneOffset
                 )
                 
-                Spacer()
+                Spacer().frame(height: 20)
                 
-                CustomerView(
-                    customerMessage: customerMessage,
-                    currentCustomerIndex: currentCustomerIndex,
-                    customerState: customerState,
-                    customerOffset: customerOffset,
-                    customerOpacity: customerOpacity,
-                    hasShownFirstCustomer: hasShownFirstCustomer,
-                    fishOffsetX: $fishOffsetX,
-                    onFirstCustomerShown: {
-                        hasShownFirstCustomer = true
-                    }
-                )
+                ZStack(alignment: .top) {
+                    Color.clear.frame(height: 200)
+                    
+                    CustomerView(
+                        customerMessage: customerMessage,
+                        currentCustomerIndex: currentCustomerIndex,
+                        customerState: customerState,
+                        customerOffset: customerOffset,
+                        customerOpacity: customerOpacity,
+                        hasShownFirstCustomer: hasShownFirstCustomer,
+                        fishOffsetX: $fishOffsetX,
+                        onFirstCustomerShown: {
+                            hasShownFirstCustomer = true
+                        }
+                    )
+                }
+                .frame(height: 200)
+                
+                Spacer().frame(height: 60)
                 
                 ZStack {
                     FishCuttingBoardView(
@@ -109,6 +116,7 @@ struct FishCuttingGameView: View {
                         knifePosition: knifePosition
                     )
                 }
+                .frame(height: 250)
                 .overlay(
                     ZStack {
                         ForEach(cutParticles.keys.sorted(), id: \.self) { key in
@@ -117,7 +125,7 @@ struct FishCuttingGameView: View {
                             }
                         }
                     }
-                        .allowsHitTesting(false)
+                    .allowsHitTesting(false)
                 )
                 
                 Spacer()
@@ -441,34 +449,37 @@ struct FishCuttingGameView: View {
         currentCustomerIndex = Int.random(in: 1...GameConstants.maxCustomers)
         hasShownFirstCustomer = false
         customerIsSatisfied = false
-        isKnifeMoving = false // Don't start knife movement immediately
+        isKnifeMoving = false
         fishRotation = 0
         fishVerticalOffset = 0
         showDashedLines = false
         customerOffset = 300
         customerOpacity = 0
         
-        // Animate entrance
+        // ✅ These two lines are CRUCIAL for the fish to reappear
+        fishOffsetX = 400
+        isAnimatingFish = false
+
+        // Animate customer and fish entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             withAnimation(.easeOut(duration: 0.5)) {
                 customerOffset = 0
                 customerOpacity = 1
+                fishOffsetX = 0
             }
         }
-        
-        // Start fish animation
+
+        // ✅ Re-trigger fish animation exactly like in startNextRound
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             animateFish()
         }
-        
-        // Show dashed lines with proper timing
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             withAnimation(.easeIn(duration: 0.3)) {
                 showDashedLines = true
             }
         }
-        
-        // Start knife movement 1 second after fish is in position
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
         }

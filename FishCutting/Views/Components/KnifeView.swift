@@ -8,7 +8,8 @@ struct KnifeView: View {
     
     var body: some View {
         ZStack {
-            if isKnifeMoving || isCutting || showCutResult {
+            // Show knife when moving or cutting, but HIDE when showing cut results
+            if (isKnifeMoving || isCutting) && !showCutResult {
                 Image("knife")
                     .resizable()
                     .scaledToFit()
@@ -22,7 +23,7 @@ struct KnifeView: View {
 
 #Preview {
     VStack {
-        // Preview with knife visible
+        // Preview with knife visible (moving)
         KnifeView(
             isKnifeMoving: true,
             isCutting: false,
@@ -41,6 +42,21 @@ struct KnifeView: View {
             knifePosition: 150
         )
         .frame(height: 200)
+        
+        Divider()
+        
+        // Preview with knife HIDDEN (showing cut results)
+        KnifeView(
+            isKnifeMoving: false,
+            isCutting: false,
+            showCutResult: true,
+            knifePosition: 150
+        )
+        .frame(height: 200)
+        .overlay(
+            Text("Cut results showing - knife should be hidden")
+                .foregroundColor(.red)
+        )
     }
     .background(Color.yellow.opacity(0.3))
 }

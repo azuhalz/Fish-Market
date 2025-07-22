@@ -9,9 +9,10 @@ import SwiftUI
 import AVFoundation
 
 struct GameOverView: View {
-    var Highscore: Int
-    var satisfiedCount: Int
-    var onPlayAgain: () -> Void
+    let currentScore: Int
+    let satisfiedCount: Int
+    let previousHighScore: Int
+    let onRestart: () -> Void
 
     @State private var displayedScore = 0
     @State private var displayedSatisfied = 0
@@ -23,22 +24,17 @@ struct GameOverView: View {
     @State private var counterSoundPlayer: AVQueuePlayer?
     @State private var counterSoundLooper: AVPlayerLooper?
 
-    let currentScore: Int
-    let satisfiedCount: Int
-    let previousHighScore: Int
-    let onRestart: () -> Void
-    
     var body: some View {
         VStack(spacing: 20) {
             let isNewRecord = satisfiedCount > previousHighScore
-            
+
             Text("GAME OVER")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
-            
+
             if isNewRecord {
-                Text("NEW HIGHSCORE: \(satisfiedCount)")
+                Text("NEW HIGHSCORE: \(displayedSatisfied)")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -48,11 +44,11 @@ struct GameOverView: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
             }
-            
-            Text("YOUR SCORE: \(satisfiedCount)")
+
+            Text("YOUR SCORE: \(displayedSatisfied)")
                 .font(.title3)
                 .foregroundColor(.white)
-            
+
             Button("Play Again") {
                 onRestart()
             }
@@ -62,9 +58,13 @@ struct GameOverView: View {
             .foregroundColor(.orange)
             .cornerRadius(10)
         }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.orange.opacity(0.8))
+        )
         .onAppear {
             playCounterSoundLooping()
-            animateCounter(to: Highscore, state: $displayedScore)
             animateCounter(to: satisfiedCount, state: $displayedSatisfied)
         }
     }
@@ -78,7 +78,7 @@ struct GameOverView: View {
         Timer.scheduledTimer(withTimeInterval: updateInterval, repeats: true) { timer in
             if currentStep >= steps {
                 state.wrappedValue = target
-                stopCounterSound() // Stop sound when done
+                stopCounterSound()
                 timer.invalidate()
             } else {
                 state.wrappedValue = min(target, Int(Double(currentStep) * increment))
@@ -103,7 +103,6 @@ struct GameOverView: View {
         player.volume = 1.0
         player.play()
 
-        // Store in @State so we can stop it later
         counterSoundPlayer = player
         counterSoundLooper = looper
     }
@@ -113,14 +112,10 @@ struct GameOverView: View {
         counterSoundPlayer?.removeAllItems()
         counterSoundPlayer = nil
         counterSoundLooper = nil
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.orange.opacity(0.8))
-        )
     }
 }
 
+// MARK: - Preview
 #Preview {
     GameOverView(
         currentScore: 12,
@@ -130,7 +125,5 @@ struct GameOverView: View {
             print("Restart tapped")
         }
     )
-    .padding()
-    .background(Color.black)
 }
 

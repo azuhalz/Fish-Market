@@ -129,7 +129,7 @@ struct FishCuttingGameView: View {
                                 CutParticleView(position: pos)
                             }
                         }
-                        .offset(x: 37, y: 75)
+                        .offset(x: 37, y: 35)
                     }
                     .allowsHitTesting(false)
                 )
@@ -191,23 +191,6 @@ struct FishCuttingGameView: View {
         generator.impactOccurred()
     }
     
-    // MARK: - Unsatisfied Haptics
-    func playUnsatisfiedHaptic() {
-        let notificationGenerator = UINotificationFeedbackGenerator()
-        notificationGenerator.prepare()
-        notificationGenerator.notificationOccurred(.error)
-        
-        let impact = UIImpactFeedbackGenerator(style: .heavy)
-        impact.prepare()
-        
-        for i in 0..<5 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.1) {
-                impact.impactOccurred()
-            }
-        }
-    }
-
-    // MARK: - First Customer Animation
     // MARK: - First Customer Animation
     private func showFirstCustomer() {
         customerOffset = 300
@@ -333,7 +316,7 @@ struct FishCuttingGameView: View {
         if fishCuts.count == requestedCuts - 1 {
             finishCutting()
         } else {
-            customerMessage = "One more cut!"
+            customerMessage = "\(requestedCuts - fishCuts.count - 1) more cut!"
         }
     }
     
@@ -342,9 +325,10 @@ struct FishCuttingGameView: View {
         roundInProgress = false
         customerState = customerIsSatisfied ? .satisfied : .unsatisfied
         customerMessage = customerIsSatisfied ? "Thank you" : "It's so bad"
+        customerIsSatisfied = score >= GameConstants.satisfactionThreshold
         
         if !customerIsSatisfied {
-            playUnsatisfiedHaptic()
+            hapticManager.playUnsatisfiedHaptic()
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -384,8 +368,10 @@ struct FishCuttingGameView: View {
         
         score = Int(totalScore / CGFloat(requestedCuts - 1))
         customerIsSatisfied = score >= GameConstants.satisfactionThreshold
+        print("Customer is satisfied? \(customerIsSatisfied)")
         
         if customerIsSatisfied {
+            print("✅ Memanggil haptic untuk customer yang puas")
             satisfiedCount += 1
             
             let previousScore = scoreManager.getHighScore()
@@ -399,6 +385,9 @@ struct FishCuttingGameView: View {
                 tracker.totalSatisfied += 1
                 try? context.save()
             }
+        } else {
+            print("❌ Customer tidak puas. Memanggil playUnsatisfiedHaptic()")
+            hapticManager.playUnsatisfiedHaptic()
         }
     }
     

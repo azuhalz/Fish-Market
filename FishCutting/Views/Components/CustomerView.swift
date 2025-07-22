@@ -13,16 +13,18 @@ struct CustomerView: View {
     
     var body: some View {
         VStack {
-            Text(customerMessage)
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundColor(.black)
-                .padding()
-                .background(Color.white)
-                .cornerRadius(20)
-                .shadow(radius: 5)
-                .offset(x: customerOffset)  // Add offset to speech bubble
-                .opacity(customerOpacity)   // Add opacity to speech bubble
+            ZStack {
+                Image("text_bubble")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 350, height: 100)
+                    .offset(y: 5)
+                
+                Text(customerMessage)
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundColor(.black)
+            }
             
             Image("person_\(currentCustomerIndex)\(customerState.imageSuffix)")
                 .resizable()
@@ -44,7 +46,7 @@ struct CustomerView: View {
     VStack(spacing: 20) {
         // Preview asking state
         CustomerView(
-            customerMessage: "Please cut into 3 pieces",
+            customerMessage: "Please cut into 3",
             currentCustomerIndex: 1,
             customerState: .asking,
             customerOffset: 0,

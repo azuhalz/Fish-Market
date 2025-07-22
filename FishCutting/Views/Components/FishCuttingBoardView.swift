@@ -117,7 +117,7 @@ struct FishCuttingBoardView: View {
                 }
             }
         }
-        .frame(width: width, height: GameConstants.fishHeight)
+        .frame(width: width, height: GameConstants.fishHeight + 50)
     }
 }
 

@@ -112,7 +112,7 @@ struct FishCuttingGameView: View {
                             resetFishAnimation()
                         }
                     )
-                    .offset(y: -50)
+                    .offset(y: -70)
                     
                     KnifeView(
                         isKnifeMoving: isKnifeMoving,
@@ -121,7 +121,7 @@ struct FishCuttingGameView: View {
                         knifePosition: knifePosition
                     )
                 }
-                .frame(height: 250)
+                .frame(height: 300)
                 .overlay(
                     ZStack {
                         ForEach(cutParticles.keys.sorted(), id: \.self) { key in

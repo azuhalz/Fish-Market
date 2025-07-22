@@ -112,7 +112,7 @@ struct FishCuttingGameView: View {
                             resetFishAnimation()
                         }
                     )
-                    .offset(y: -70)
+                    .offset(y: -80)
                     
                     KnifeView(
                         isKnifeMoving: isKnifeMoving,

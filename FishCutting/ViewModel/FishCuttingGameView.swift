@@ -124,7 +124,7 @@ struct FishCuttingGameView: View {
                                 CutParticleView(position: pos)
                             }
                         }
-                        .offset(x: 37, y: 75)
+                        .offset(x: 37, y: 35)
                     }
                     .allowsHitTesting(false)
                 )

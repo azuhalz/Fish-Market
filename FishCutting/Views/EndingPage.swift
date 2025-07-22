@@ -23,38 +23,44 @@ struct GameOverView: View {
     @State private var counterSoundPlayer: AVQueuePlayer?
     @State private var counterSoundLooper: AVPlayerLooper?
 
+    let currentScore: Int
+    let satisfiedCount: Int
+    let previousHighScore: Int
+    let onRestart: () -> Void
+    
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.5).ignoresSafeArea()
-
-            VStack(spacing: 20) {
-                Text("Game Over")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-
-                Text("Highscore: \(displayedScore)")
+        VStack(spacing: 20) {
+            let isNewRecord = satisfiedCount > previousHighScore
+            
+            Text("GAME OVER")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+            
+            if isNewRecord {
+                Text("NEW HIGHSCORE: \(satisfiedCount)")
                     .font(.title2)
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
-
-                Text("Satisfied Customers: \(displayedSatisfied)")
-                    .font(.title3)
+            } else {
+                Text("HIGHSCORE: \(previousHighScore)")
+                    .font(.title2)
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
-
-                Button(action: onPlayAgain) {
-                    Text("Play Again")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
             }
+            
+            Text("YOUR SCORE: \(satisfiedCount)")
+                .font(.title3)
+                .foregroundColor(.white)
+            
+            Button("Play Again") {
+                onRestart()
+            }
+            .font(.title2)
             .padding()
-            .background(Color.yellow.opacity(1))
-            .cornerRadius(20)
-            .padding()
+            .background(Color.white)
+            .foregroundColor(.orange)
+            .cornerRadius(10)
         }
         .onAppear {
             playCounterSoundLooping()
@@ -107,10 +113,24 @@ struct GameOverView: View {
         counterSoundPlayer?.removeAllItems()
         counterSoundPlayer = nil
         counterSoundLooper = nil
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.orange.opacity(0.8))
+        )
     }
 }
 
 #Preview {
-    GameOverView(Highscore: 14, satisfiedCount: 5, onPlayAgain: {})
+    GameOverView(
+        currentScore: 12,
+        satisfiedCount: 15,
+        previousHighScore: 10,
+        onRestart: {
+            print("Restart tapped")
+        }
+    )
+    .padding()
+    .background(Color.black)
 }
 

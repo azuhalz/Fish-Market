@@ -53,7 +53,11 @@ struct FishCuttingGameView: View {
     var body: some View {
         ZStack {
             // Background
-            Color.yellow.opacity(0.3).ignoresSafeArea()
+//            Color.yellow.opacity(0.3).ignoresSafeArea()
+            Image("background")
+                .resizable()
+                .scaledToFill()
+                .offset(y: -15)
             
             // Main Game Content
             VStack(spacing: 20) {
@@ -108,6 +112,7 @@ struct FishCuttingGameView: View {
                             resetFishAnimation()
                         }
                     )
+                    .offset(y: -50)
                     
                     KnifeView(
                         isKnifeMoving: isKnifeMoving,
@@ -131,6 +136,7 @@ struct FishCuttingGameView: View {
                 
                 Spacer()
             }
+            .offset(y: 50)
             
             if showScore {
                 ZStack {

@@ -53,7 +53,12 @@ struct FishCuttingGameView: View {
     
     var body: some View {
         ZStack {
-            Color.yellow.opacity(0.3).ignoresSafeArea()
+            // Background
+//            Color.yellow.opacity(0.3).ignoresSafeArea()
+            Image("background")
+                .resizable()
+                .scaledToFill()
+                .offset(y: -15)
             
             VStack(spacing: 20) {
                 GameHeaderView(
@@ -107,6 +112,7 @@ struct FishCuttingGameView: View {
                             resetFishAnimation()
                         }
                     )
+                    .offset(y: -80)
                     
                     KnifeView(
                         isKnifeMoving: isKnifeMoving,
@@ -115,7 +121,7 @@ struct FishCuttingGameView: View {
                         knifePosition: knifePosition
                     )
                 }
-                .frame(height: 250)
+                .frame(height: 300)
                 .overlay(
                     ZStack {
                         ForEach(cutParticles.keys.sorted(), id: \.self) { key in
@@ -130,6 +136,8 @@ struct FishCuttingGameView: View {
                 
                 Spacer()
             }
+            .offset(y: 50)
+          
             if showScore {
                 ZStack {
                     Color.black.opacity(0.6).ignoresSafeArea()

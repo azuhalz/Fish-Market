@@ -87,6 +87,12 @@ struct FishCuttingBoardView: View {
         let startX = (width - totalWidth) / 2
         
         return ZStack {
+            Image("cut_board")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 330, height: 165)
+                .offset(y: 113)
+            
             ForEach(0..<totalPieces, id: \.self) { i in
                 let left = sortedCuts[i]
                 let right = sortedCuts[i + 1]
@@ -105,11 +111,12 @@ struct FishCuttingBoardView: View {
                                 .frame(width: segmentWidth + 2, height: GameConstants.fishHeight)
                                 .offset(x: maskCenter - GameConstants.fishWidth / 2)
                         )
-                        .offset(x: xOffset - width / 2 + fishOffsetX, y: fishVerticalOffset + 135) // Added fishOffsetX here!
+                        .offset(x: 10 + xOffset - width / 2, y: fishVerticalOffset + 103)
+//                         .offset(x: xOffset - width / 2 + fishOffsetX, y: fishVerticalOffset + 135) // Added fishOffsetX here!
                 }
             }
         }
-        .frame(width: width, height: GameConstants.fishHeight)
+        .frame(width: width, height: GameConstants.fishHeight + 50)
     }
 }
 

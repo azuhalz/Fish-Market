@@ -27,8 +27,8 @@ struct CustomerView: View {
             Image("person_\(currentCustomerIndex)\(customerState.imageSuffix)")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 200, height: 200)
-                .offset(x: customerOffset)
+                .frame(width: 225, height: 225)
+                .offset(x: customerOffset, y: 45)
                 .opacity(customerOpacity)
                 .animation(.easeInOut(duration: 0.3), value: customerState)
                 .onAppear {

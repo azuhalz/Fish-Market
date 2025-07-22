@@ -9,12 +9,12 @@ struct GameHeaderView: View {
     
     var body: some View {
         HStack {
-            Text("Highscore:\(currentHighScore)")
+            Text("Highscore: \(currentHighScore)")
                 .font(.body)
                 .fontWeight(.medium)
                 .foregroundColor(.white)
                 .padding(10)
-                .background(Color.blue)
+                .background(Color.orange)
                 .cornerRadius(10)
             
             Spacer()
@@ -30,12 +30,12 @@ struct GameHeaderView: View {
             Spacer()
             
             ZStack {
-                Text("Satisfied: \(satisfiedCount)")
+                Text("Score: \(satisfiedCount)")
                     .font(.body)
                     .fontWeight(.medium)
                     .foregroundColor(.white)
                     .padding(10)
-                    .background(Color.green)
+                    .background(Color.orange)
                     .cornerRadius(10)
                 
                 if showPlusOne {

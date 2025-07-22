@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 class ScoreManager: ObservableObject {
     private let highScoreKey = "highscore"
@@ -16,5 +17,9 @@ class ScoreManager: ObservableObject {
     
     func resetHighScore() {
         UserDefaults.standard.removeObject(forKey: highScoreKey)
+    }
+    
+    func isNewHighScore(_ currentScore: Int) -> Bool {
+        return currentScore > getHighScore()
     }
 }

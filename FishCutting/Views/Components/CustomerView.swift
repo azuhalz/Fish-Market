@@ -3,7 +3,7 @@ import SwiftUI
 struct CustomerView: View {
     let customerMessage: String
     let currentCustomerIndex: Int
-    let customerState: CustomerState  // Tambahkan parameter ini
+    let customerState: CustomerState
     let customerOffset: CGFloat
     let customerOpacity: Double
     let hasShownFirstCustomer: Bool
@@ -29,11 +29,10 @@ struct CustomerView: View {
             Image("person_\(currentCustomerIndex)\(customerState.imageSuffix)")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 200, height: 200)
-                .offset(x: customerOffset)
+                .frame(width: 225, height: 225)
+                .offset(x: customerOffset, y: 45)
                 .opacity(customerOpacity)
-                .animation(.easeOut(duration: 0.5), value: customerOffset)
-                .animation(.easeInOut(duration: 0.3), value: customerState) // Animasi untuk perubahan state
+                .animation(.easeInOut(duration: 0.3), value: customerState)
                 .onAppear {
                     if !hasShownFirstCustomer {
                         onFirstCustomerShown()

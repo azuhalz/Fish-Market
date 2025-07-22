@@ -41,7 +41,7 @@ struct FishCuttingBoardView: View {
                     .scaledToFit()
                     .frame(width: GameConstants.fishWidth, height: GameConstants.fishHeight)
                     .rotationEffect(.degrees(fishRotation))
-                    .offset(x: fishOffsetX, y: 120)
+                    .offset(x: fishOffsetX, y: 120 + fishVerticalOffset) // Added fishVerticalOffset here too
                     .onAppear {
                         onFishAppear()
                         
@@ -56,7 +56,6 @@ struct FishCuttingBoardView: View {
                         onFishIndexChange()
                     }
                 
-                // Dash lines for the cuts
                 if showDashedLines {
                     ForEach(1..<requestedCuts, id: \.self) { i in
                         let x = GameConstants.fishWidth * CGFloat(i) / CGFloat(requestedCuts)
@@ -67,7 +66,6 @@ struct FishCuttingBoardView: View {
                     }
                 }
                 
-                // Cut marks
                 ForEach(Array(fishCuts.enumerated()), id: \.offset) { index, cutPosition in
                     Rectangle()
                         .fill(Color.black)
@@ -89,6 +87,12 @@ struct FishCuttingBoardView: View {
         let startX = (width - totalWidth) / 2
         
         return ZStack {
+            Image("cut_board")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 330, height: 165)
+                .offset(y: 113)
+            
             ForEach(0..<totalPieces, id: \.self) { i in
                 let left = sortedCuts[i]
                 let right = sortedCuts[i + 1]
@@ -107,11 +111,12 @@ struct FishCuttingBoardView: View {
                                 .frame(width: segmentWidth + 2, height: GameConstants.fishHeight)
                                 .offset(x: maskCenter - GameConstants.fishWidth / 2)
                         )
-                        .offset(x: xOffset - width / 2, y: fishVerticalOffset + 135)
+                        .offset(x: 10 + xOffset - width / 2, y: fishVerticalOffset + 103)
+//                         .offset(x: xOffset - width / 2 + fishOffsetX, y: fishVerticalOffset + 135) // Added fishOffsetX here!
                 }
             }
         }
-        .frame(width: width, height: GameConstants.fishHeight)
+        .frame(width: width, height: GameConstants.fishHeight + 50)
     }
 }
 

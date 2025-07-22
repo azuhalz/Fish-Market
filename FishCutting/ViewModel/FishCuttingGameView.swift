@@ -2,6 +2,8 @@ import SwiftUI
 import _SwiftData_SwiftUI
 
 struct FishCuttingGameView: View {
+    @StateObject private var scoreManager = ScoreManager()
+
     @State private var timeRemaining = 10
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = false
@@ -48,14 +50,16 @@ struct FishCuttingGameView: View {
     
     private let audioManager = AudioManager()
     private let hapticManager = HapticManager()
-    private let scoreManager = ScoreManager()
     
     var body: some View {
         ZStack {
             // Background
-            Color.yellow.opacity(0.3).ignoresSafeArea()
+//            Color.yellow.opacity(0.3).ignoresSafeArea()
+            Image("background")
+                .resizable()
+                .scaledToFill()
+                .offset(y: -15)
             
-            // Main Game Content
             VStack(spacing: 20) {
                 GameHeaderView(
                     timeRemaining: timeRemaining,
@@ -108,6 +112,7 @@ struct FishCuttingGameView: View {
                             resetFishAnimation()
                         }
                     )
+                    .offset(y: -80)
                     
                     KnifeView(
                         isKnifeMoving: isKnifeMoving,
@@ -116,7 +121,7 @@ struct FishCuttingGameView: View {
                         knifePosition: knifePosition
                     )
                 }
-                .frame(height: 250)
+                .frame(height: 300)
                 .overlay(
                     ZStack {
                         ForEach(cutParticles.keys.sorted(), id: \.self) { key in
@@ -131,13 +136,19 @@ struct FishCuttingGameView: View {
                 
                 Spacer()
             }
-            
+            .offset(y: 50)
+          
             if showScore {
                 ZStack {
                     Color.black.opacity(0.6).ignoresSafeArea()
-                    GameOverView(Highscore: score, satisfiedCount: satisfiedCount) {
-                        resetGame()
-                    }
+                    GameOverView(
+                        currentScore: score,
+                        satisfiedCount: satisfiedCount,
+                        previousHighScore: currentHighScore,
+                        onRestart: {
+                            resetGame()
+                        }
+                    )
                 }
                 .transition(.opacity)
                 .zIndex(10)
@@ -168,7 +179,7 @@ struct FishCuttingGameView: View {
         }
         
         hapticManager.prepareHaptics()
-        // Don't start knife movement here - wait for fish to settle
+        //startKnifeMovement()
         //audioManager.playBackgroundMusic()
         showFirstCustomer()
     }
@@ -179,19 +190,18 @@ struct FishCuttingGameView: View {
         generator.prepare()
         generator.impactOccurred()
     }
-
+    
     // MARK: - First Customer Animation
     private func showFirstCustomer() {
-        // Reset positions
         customerOffset = 300
         fishOffsetX = 400
         customerOpacity = 0
         showDashedLines = false
         isKnifeMoving = false
         
-        // Animate customer and fish entrance
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            withAnimation(.easeOut(duration: 0.5)) {
+        // Animate both customer and fish entrance together
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.easeOut(duration: 0.4)) {
                 customerOffset = 0
                 fishOffsetX = 0
                 customerOpacity = 1
@@ -199,12 +209,12 @@ struct FishCuttingGameView: View {
         }
         
         // Start fish animation after entrance
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             animateFish()
         }
         
         // Show dashed lines after fish settles
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             withAnimation(.easeIn(duration: 0.3)) {
                 showDashedLines = true
             }
@@ -317,7 +327,6 @@ struct FishCuttingGameView: View {
         customerMessage = customerIsSatisfied ? "Thank you" : "It's so bad"
         customerIsSatisfied = score >= GameConstants.satisfactionThreshold
         
-        // Trigger haptic when customer is unsatisfied
         if !customerIsSatisfied {
             hapticManager.playUnsatisfiedHaptic()
         }
@@ -327,8 +336,9 @@ struct FishCuttingGameView: View {
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation(.easeInOut(duration: 0.5)) {
+                    // Synchronize both customer and fish sliding out
                     customerOffset = -300
-                    fishOffsetX = 400
+                    fishOffsetX = -400  // Make fish slide out to the left (same direction as customer)
                     customerOpacity = 0
                 }
             }
@@ -363,8 +373,12 @@ struct FishCuttingGameView: View {
         if customerIsSatisfied {
             print("✅ Memanggil haptic untuk customer yang puas")
             satisfiedCount += 1
+            
+            let previousScore = scoreManager.getHighScore()
+
             scoreManager.updateHighScore(satisfiedCount)
-            currentHighScore = scoreManager.getHighScore()
+            currentHighScore = previousScore // ← Pass this to GameOverView
+            
             triggerPlusOneAnimation()
             
             if let tracker = trackers.first {
@@ -409,39 +423,40 @@ struct FishCuttingGameView: View {
         currentCustomerIndex = Int.random(in: 1...GameConstants.maxCustomers)
         currentFishIndex = Int.random(in: 1...GameConstants.maxFishTypes)
         knifePosition = 0
-        isKnifeMoving = false // Stop knife movement during transition
+        isKnifeMoving = false
         showDashedLines = false
+        
         resetFishAnimation()
+        
+        // Set both customer and fish to their starting positions
         customerOffset = 300
         customerOpacity = 0
+        fishOffsetX = 400  // Fish starts from the right
         
-        // Animate customer and fish entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             withAnimation(.easeOut(duration: 0.5)) {
+                // Both slide in together
                 customerOffset = 0
                 fishOffsetX = 0
                 customerOpacity = 1
             }
         }
         
-        // Start fish animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             animateFish()
         }
         
-        // Show dashed lines after fish settles
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             withAnimation(.easeIn(duration: 0.3)) {
                 showDashedLines = true
             }
         }
         
-        // Start knife movement 1 second after fish is in position
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
         }
     }
-    
+
     // MARK: - Game Control
     private func endGame() {
         showScore = true
@@ -469,11 +484,19 @@ struct FishCuttingGameView: View {
         hasShownFirstCustomer = false
         customerIsSatisfied = false
         isKnifeMoving = false
+        
         fishRotation = 0
         fishVerticalOffset = 0
+        
         showDashedLines = false
+        roundInProgress = true
+        
+        resetFishAnimation()
+        
+        // Set starting positions for synchronized entrance
         customerOffset = 300
         customerOpacity = 0
+        fishOffsetX = 400
         
         // ✅ These two lines are CRUCIAL for the fish to reappear
         fishOffsetX = 400
@@ -482,23 +505,24 @@ struct FishCuttingGameView: View {
         // Animate customer and fish entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             withAnimation(.easeOut(duration: 0.5)) {
+                // Both slide in together
                 customerOffset = 0
+                fishOffsetX = 0
                 customerOpacity = 1
                 fishOffsetX = 0
             }
         }
-
-        // ✅ Re-trigger fish animation exactly like in startNextRound
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             animateFish()
         }
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             withAnimation(.easeIn(duration: 0.3)) {
                 showDashedLines = true
             }
         }
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
         }

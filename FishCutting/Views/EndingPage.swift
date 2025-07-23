@@ -27,42 +27,35 @@ struct GameOverView: View {
     var body: some View {
         VStack(spacing: 20) {
             let isNewRecord = satisfiedCount > previousHighScore
-
-            Text("GAME OVER")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-
-            if isNewRecord {
-                Text("NEW HIGHSCORE: \(displayedSatisfied)")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-            } else {
-                Text("HIGHSCORE: \(previousHighScore)")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+            
+            ZStack {
+                Image("game_over")
+                
+                VStack (alignment: .leading) {
+                    if isNewRecord {
+                        Text("NEW HIGHSCORE: \(displayedSatisfied)")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                    } else {
+                        Text("HIGHSCORE: \(previousHighScore)")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                    }
+                    
+                    Text("YOUR SCORE: \(displayedSatisfied)")
+                        .font(.title3)
+                        .foregroundColor(.black)
+                }
             }
 
-            Text("YOUR SCORE: \(displayedSatisfied)")
-                .font(.title3)
-                .foregroundColor(.white)
-
-            Button("Play Again") {
+            Button {
                 onRestart()
+            } label: {
+                Image("play_again_button")
             }
-            .font(.title2)
-            .padding()
-            .background(Color.white)
-            .foregroundColor(.orange)
-            .cornerRadius(10)
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.orange.opacity(0.8))
-        )
         .onAppear {
             playCounterSoundLooping()
             animateCounter(to: satisfiedCount, state: $displayedSatisfied)

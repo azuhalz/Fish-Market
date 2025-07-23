@@ -20,12 +20,13 @@ struct GameHeaderView: View {
             Spacer()
             
             Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
-                .font(.body)
+                .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(10)
-                .background(Color.orange)
-                .cornerRadius(10)
+                .foregroundColor(.black)
+//                .padding(10)
+//                .background(Color.orange)
+//                .cornerRadius(10)
+                .offset(x: -18, y: -8)
             
             Spacer()
             

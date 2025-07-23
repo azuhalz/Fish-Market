@@ -37,22 +37,6 @@
 			);
 			target = A09E79772E1F982C001951E5 /* FishCutting */;
 		};
-		DB1DE3932E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Fonts/LilitaOne-Regular.ttf",
-				"Fonts/Micro5-Regular.ttf",
-			);
-			target = A09E79842E1F982C001951E5 /* FishCuttingTests */;
-		};
-		DB1DE3942E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingUITests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Fonts/LilitaOne-Regular.ttf",
-				"Fonts/Micro5-Regular.ttf",
-			);
-			target = A09E798E2E1F982C001951E5 /* FishCuttingUITests */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -60,8 +44,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				A0672D4B2E2800C700D934A3 /* Exceptions for "FishCutting" folder in "FishCutting" target */,
-				DB1DE3932E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingTests" target */,
-				DB1DE3942E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingUITests" target */,
 			);
 			path = FishCutting;
 			sourceTree = "<group>";

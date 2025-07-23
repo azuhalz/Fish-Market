@@ -111,8 +111,8 @@ struct FishCuttingBoardView: View {
                                 .frame(width: segmentWidth + 2, height: GameConstants.fishHeight)
                                 .offset(x: maskCenter - GameConstants.fishWidth / 2)
                         )
-                        .offset(x: 10 + xOffset - width / 2, y: fishVerticalOffset + 103)
-//                        .offset(x: xOffset - width / 2 + fishOffsetX, y: fishVerticalOffset) // Added fishOffsetX here!
+                        .offset(x: fishOffsetX + 10 + xOffset - width / 2, y: fishVerticalOffset + 103)
+                        .opacity(Double(1 - abs(fishOffsetX / 400)))
                 }
             }
         }

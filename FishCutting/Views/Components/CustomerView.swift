@@ -29,8 +29,8 @@ struct CustomerView: View {
                 Image("name_\(currentCustomerIndex)")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100, height: 30)
-                    .offset(x: -120, y: -40)
+                    .frame(width: 80, height: 30)
+                    .offset(x: -80, y: -30)
             }
             .offset(x: customerOffset)
             .opacity(customerOpacity)

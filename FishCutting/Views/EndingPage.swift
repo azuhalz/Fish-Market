@@ -1,10 +1,3 @@
-//
-//  EndingPage.swift
-//  FishCutting
-//
-//  Created by William Kesuma on 17/07/25.
-//
-
 import SwiftUI
 import AVFoundation
 

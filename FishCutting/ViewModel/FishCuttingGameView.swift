@@ -4,7 +4,7 @@ import _SwiftData_SwiftUI
 struct FishCuttingGameView: View {
     @StateObject private var scoreManager = ScoreManager()
 
-    @State private var timeRemaining = 60
+    @State private var timeRemaining = 10
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = false
     @State private var fishCuts: [CGFloat] = []
@@ -39,6 +39,8 @@ struct FishCuttingGameView: View {
     @State private var cutParticles: [UUID: CGPoint] = [:]
     @State private var customerState: CustomerState = .asking
     @State private var showDashedLines = false
+    @State private var showTimesUp = false
+
     
     @Binding var isPlaying: Bool
     
@@ -65,7 +67,11 @@ struct FishCuttingGameView: View {
                 .resizable()
                 .scaledToFill()
                 .offset(y: -15)
-            
+
+            Image("background_top")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
             
             VStack(spacing: 20) {
                 GameHeaderView(
@@ -98,7 +104,7 @@ struct FishCuttingGameView: View {
                         Image("background_bottom")
                             .resizable()
                             .scaledToFill()
-                            .offset(y: 150)
+                            .offset(y: 125)
                     }
                 }
                 .frame(height: 200)
@@ -143,7 +149,7 @@ struct FishCuttingGameView: View {
                                 CutParticleView(position: pos)
                             }
                         }
-                        .offset(x: 33, y: -10)
+                        .offset(x: 32, y: -10)
                     }
                     .allowsHitTesting(false)
                 )
@@ -151,6 +157,21 @@ struct FishCuttingGameView: View {
                 Spacer()
             }
             .offset(y: 50)
+            
+            if showTimesUp {
+                ZStack {
+                    Color.black.opacity(0.6)
+                        .ignoresSafeArea()
+
+                    Image("Times_Up")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 300)
+                        .transition(.scale)
+                        .zIndex(15)
+                }
+                .zIndex(15)
+            }
           
             if showScore {
                 ZStack {
@@ -194,7 +215,7 @@ struct FishCuttingGameView: View {
         
         hapticManager.prepareHaptics()
         //startKnifeMovement()
-        audioManager.playBackgroundMusic()
+//        audioManager.playBackgroundMusic()
         showFirstCustomer()
     }
     
@@ -212,6 +233,7 @@ struct FishCuttingGameView: View {
         customerOpacity = 0
         showDashedLines = false
         isKnifeMoving = false
+        audioManager.playBackgroundMusic()
         
         // Animate both customer and fish entrance together
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -427,6 +449,9 @@ struct FishCuttingGameView: View {
     
     // MARK: - Round Management
     private func startNextRound() {
+        if audioManager.bgAudioPlayer?.isPlaying != true {
+            audioManager.playBackgroundMusic()
+        }
         fishCuts = []
         isCutting = false
         showCutResult = false
@@ -466,19 +491,32 @@ struct FishCuttingGameView: View {
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             startKnifeMovement()
         }
     }
 
     // MARK: - Game Control
     private func endGame() {
-        showScore = true
+        if !isKnifeMoving {
+            return
+        }
+        
         isKnifeMoving = false
         knifeTimer?.invalidate()
         audioManager.stopFishSound()
-    }
+        audioManager.stopBackgroundMusic()
         
+        showTimesUp = true
+        audioManager.playTimesUpSound()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            showTimesUp = false
+            showScore = true
+        }
+    }
+
+
     private func resetGame() {
         isPlaying = false
         customerState = .asking
@@ -538,6 +576,7 @@ struct FishCuttingGameView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
+            audioManager.playBackgroundMusic()
         }
     }
 }

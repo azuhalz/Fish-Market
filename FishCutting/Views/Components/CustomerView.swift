@@ -17,7 +17,7 @@ struct CustomerView: View {
                 Image("text_bubble")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 350, height: 100)
+                    .frame(width: 250, height: 100)
                     .offset(y: 5)
                 
                 Text(customerMessage)

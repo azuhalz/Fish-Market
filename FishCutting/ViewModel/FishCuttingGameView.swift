@@ -4,7 +4,7 @@ import _SwiftData_SwiftUI
 struct FishCuttingGameView: View {
     @StateObject private var scoreManager = ScoreManager()
 
-    @State private var timeRemaining = 60
+    @State private var timeRemaining = 10
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = false
     @State private var fishCuts: [CGFloat] = []
@@ -39,6 +39,8 @@ struct FishCuttingGameView: View {
     @State private var cutParticles: [UUID: CGPoint] = [:]
     @State private var customerState: CustomerState = .asking
     @State private var showDashedLines = false
+    @State private var showTimesUp = false
+
     
     @Binding var isPlaying: Bool
     
@@ -151,6 +153,21 @@ struct FishCuttingGameView: View {
                 Spacer()
             }
             .offset(y: 50)
+            
+            if showTimesUp {
+                ZStack {
+                    Color.black.opacity(0.6)
+                        .ignoresSafeArea()
+
+                    Image("Times_Up")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 300)
+                        .transition(.scale)
+                        .zIndex(15)
+                }
+                .zIndex(15)
+            }
           
             if showScore {
                 ZStack {
@@ -473,12 +490,24 @@ struct FishCuttingGameView: View {
 
     // MARK: - Game Control
     private func endGame() {
-        showScore = true
+        if !isKnifeMoving {
+            return
+        }
+        
         isKnifeMoving = false
         knifeTimer?.invalidate()
         audioManager.stopFishSound()
-    }
         
+        showTimesUp = true
+        audioManager.playTimesUpSound()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            showTimesUp = false
+            showScore = true
+        }
+    }
+
+
     private func resetGame() {
         isPlaying = false
         customerState = .asking

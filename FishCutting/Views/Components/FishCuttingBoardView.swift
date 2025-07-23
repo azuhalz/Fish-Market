@@ -102,7 +102,7 @@ struct FishCuttingBoardView: View {
                 if segmentWidth >= 10 {
                     let xOffset = startX + CGFloat(i) * (pieceWidth + spacing)
                     
-                    Image("fish\(currentFishIndex)")
+                    Image("fish\(currentFishIndex)_dead")
                         .resizable()
                         .scaledToFit()
                         .frame(width: GameConstants.fishWidth, height: GameConstants.fishHeight)

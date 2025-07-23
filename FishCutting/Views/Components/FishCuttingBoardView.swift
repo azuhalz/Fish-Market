@@ -61,7 +61,7 @@ struct FishCuttingBoardView: View {
                         let x = GameConstants.fishWidth * CGFloat(i) / CGFloat(requestedCuts)
                         DashedLine()
                             .stroke(Color.black, style: StrokeStyle(lineWidth: 2, dash: [5]))
-                            .frame(width: 2, height: GameConstants.fishHeight)
+                            .frame(width: 2, height: GameConstants.fishHeight - 15)
                             .offset(x: x - GameConstants.fishWidth/2, y: 120)
                     }
                 }
@@ -70,7 +70,7 @@ struct FishCuttingBoardView: View {
                     Rectangle()
                         .fill(Color.black)
                         .opacity(0.3)
-                        .frame(width: 3, height: GameConstants.fishHeight)
+                        .frame(width: 3, height: GameConstants.fishHeight - 15)
                         .offset(x: cutPosition - GameConstants.fishWidth/2, y: 120)
                 }
             }
@@ -112,7 +112,7 @@ struct FishCuttingBoardView: View {
                                 .offset(x: maskCenter - GameConstants.fishWidth / 2)
                         )
                         .offset(x: 10 + xOffset - width / 2, y: fishVerticalOffset + 103)
-//                         .offset(x: xOffset - width / 2 + fishOffsetX, y: fishVerticalOffset + 135) // Added fishOffsetX here!
+                        .offset(x: xOffset - width / 2 + fishOffsetX, y: fishVerticalOffset) // Added fishOffsetX here!
                 }
             }
         }

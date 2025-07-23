@@ -4,7 +4,7 @@ import _SwiftData_SwiftUI
 struct FishCuttingGameView: View {
     @StateObject private var scoreManager = ScoreManager()
 
-    @State private var timeRemaining = 10
+    @State private var timeRemaining = 60
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = false
     @State private var fishCuts: [CGFloat] = []
@@ -19,6 +19,7 @@ struct FishCuttingGameView: View {
     @State private var fishRotation: Double = 0
     @State private var fishVerticalOffset: CGFloat = 0
     @State private var fishOffsetX: CGFloat = 0
+    @State private var fishOffset: CGFloat = 0
     @State private var currentCustomerIndex = 1
     @State private var customerIsSatisfied = false
     @State private var customerMessage = "Please cut into 3"
@@ -142,7 +143,7 @@ struct FishCuttingGameView: View {
                                 CutParticleView(position: pos)
                             }
                         }
-                        .offset(x: 36, y: 5)
+                        .offset(x: 33, y: -10)
                     }
                     .allowsHitTesting(false)
                 )
@@ -193,7 +194,7 @@ struct FishCuttingGameView: View {
         
         hapticManager.prepareHaptics()
         //startKnifeMovement()
-        //audioManager.playBackgroundMusic()
+        audioManager.playBackgroundMusic()
         showFirstCustomer()
     }
     
@@ -510,6 +511,7 @@ struct FishCuttingGameView: View {
         customerOffset = 300
         customerOpacity = 0
         fishOffsetX = 400
+        audioManager.playBackgroundMusic()
         
         // ✅ These two lines are CRUCIAL for the fish to reappear
         fishOffsetX = 400

@@ -58,16 +58,15 @@ struct FishCuttingGameView: View {
         ZStack {
             // Background
 //            Color.yellow.opacity(0.3).ignoresSafeArea()
-            Image("background_top")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
             Image("background_behind")
                 .resizable()
                 .scaledToFill()
                 .offset(y: -15)
-            
+
+            Image("background_top")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
             
             VStack(spacing: 20) {
                 GameHeaderView(
@@ -100,7 +99,7 @@ struct FishCuttingGameView: View {
                         Image("background_bottom")
                             .resizable()
                             .scaledToFill()
-                            .offset(y: 150)
+                            .offset(y: 125)
                     }
                 }
                 .frame(height: 200)
@@ -145,7 +144,7 @@ struct FishCuttingGameView: View {
                                 CutParticleView(position: pos)
                             }
                         }
-                        .offset(x: 33, y: -10)
+                        .offset(x: 32, y: -10)
                     }
                     .allowsHitTesting(false)
                 )
@@ -211,7 +210,7 @@ struct FishCuttingGameView: View {
         
         hapticManager.prepareHaptics()
         //startKnifeMovement()
-        audioManager.playBackgroundMusic()
+//        audioManager.playBackgroundMusic()
         showFirstCustomer()
     }
     
@@ -229,6 +228,7 @@ struct FishCuttingGameView: View {
         customerOpacity = 0
         showDashedLines = false
         isKnifeMoving = false
+        audioManager.playBackgroundMusic()
         
         // Animate both customer and fish entrance together
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -444,6 +444,9 @@ struct FishCuttingGameView: View {
     
     // MARK: - Round Management
     private func startNextRound() {
+        if audioManager.bgAudioPlayer?.isPlaying != true {
+            audioManager.playBackgroundMusic()
+        }
         fishCuts = []
         isCutting = false
         showCutResult = false
@@ -483,7 +486,7 @@ struct FishCuttingGameView: View {
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
             startKnifeMovement()
         }
     }
@@ -497,6 +500,7 @@ struct FishCuttingGameView: View {
         isKnifeMoving = false
         knifeTimer?.invalidate()
         audioManager.stopFishSound()
+        audioManager.stopBackgroundMusic()
         
         showTimesUp = true
         audioManager.playTimesUpSound()
@@ -540,7 +544,7 @@ struct FishCuttingGameView: View {
         customerOffset = 300
         customerOpacity = 0
         fishOffsetX = 400
-        audioManager.playBackgroundMusic()
+        
         
         // ✅ These two lines are CRUCIAL for the fish to reappear
         fishOffsetX = 400
@@ -569,6 +573,7 @@ struct FishCuttingGameView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
+            audioManager.playBackgroundMusic()
         }
     }
 }

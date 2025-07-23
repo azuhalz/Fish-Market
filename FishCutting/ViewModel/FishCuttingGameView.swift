@@ -55,10 +55,16 @@ struct FishCuttingGameView: View {
         ZStack {
             // Background
 //            Color.yellow.opacity(0.3).ignoresSafeArea()
-            Image("background")
+            Image("background_top")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            
+            Image("background_behind")
                 .resizable()
                 .scaledToFill()
                 .offset(y: -15)
+            
             
             VStack(spacing: 20) {
                 GameHeaderView(
@@ -74,18 +80,25 @@ struct FishCuttingGameView: View {
                 ZStack(alignment: .top) {
                     Color.clear.frame(height: 200)
                     
-                    CustomerView(
-                        customerMessage: customerMessage,
-                        currentCustomerIndex: currentCustomerIndex,
-                        customerState: customerState,
-                        customerOffset: customerOffset,
-                        customerOpacity: customerOpacity,
-                        hasShownFirstCustomer: hasShownFirstCustomer,
-                        fishOffsetX: $fishOffsetX,
-                        onFirstCustomerShown: {
-                            hasShownFirstCustomer = true
-                        }
-                    )
+                    ZStack {
+                        CustomerView(
+                            customerMessage: customerMessage,
+                            currentCustomerIndex: currentCustomerIndex,
+                            customerState: customerState,
+                            customerOffset: customerOffset,
+                            customerOpacity: customerOpacity,
+                            hasShownFirstCustomer: hasShownFirstCustomer,
+                            fishOffsetX: $fishOffsetX,
+                            onFirstCustomerShown: {
+                                hasShownFirstCustomer = true
+                            }
+                        )
+                        
+                        Image("background_bottom")
+                            .resizable()
+                            .scaledToFill()
+                            .offset(y: 150)
+                    }
                 }
                 .frame(height: 200)
                 
@@ -129,7 +142,7 @@ struct FishCuttingGameView: View {
                                 CutParticleView(position: pos)
                             }
                         }
-                        .offset(x: 37, y: 5)
+                        .offset(x: 36, y: 5)
                     }
                     .allowsHitTesting(false)
                 )

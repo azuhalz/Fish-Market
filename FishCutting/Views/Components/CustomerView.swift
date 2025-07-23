@@ -23,8 +23,18 @@ struct CustomerView: View {
                 Text(customerMessage)
                     .font(.title2)
                     .fontWeight(.medium)
-                    .foregroundColor(.black)
+//                    .foregroundColor(.black)
+                    .foregroundColor(Color(hex: "#1794AD"))
+                
+                Image("name_\(currentCustomerIndex)")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 30)
+                    .offset(x: -120, y: -40)
             }
+            .offset(x: customerOffset)
+            .opacity(customerOpacity)
+            .animation(.easeInOut(duration: 0.3), value: customerState)
             
             Image("person_\(currentCustomerIndex)\(customerState.imageSuffix)")
                 .resizable()

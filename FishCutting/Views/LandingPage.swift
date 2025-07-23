@@ -4,9 +4,9 @@ import SwiftData
 struct LandingPage: View {
     @Query var trackers: [SatisfiedTracker]
     @State private var showHintView = false
-
-    var total: Int {
-        trackers.first?.totalSatisfied ?? 0
+    
+    var highScore: Int {
+        trackers.map { $0.totalSatisfied }.max() ?? 0
     }
 
     var body: some View {
@@ -18,13 +18,10 @@ struct LandingPage: View {
                 NavigationHintView()
             } else {
 //                Color.yellow.opacity(0.3)
-//                    .ignoresSafeArea()
+//                .ignoresSafeArea()
 
                 VStack(spacing: 20) {
-                    Text("Total satisfied customer: \(total)")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(.blue)
+                    Image("logo")
 
                     Button {
                         showHintView = true
@@ -32,12 +29,15 @@ struct LandingPage: View {
                         VStack {
                             Image("play_button")
                                 .resizable()
-                                .frame(width: 110, height: 110)
-                            Text("Play")
-                                .font(.custom("Georgia", size: 40))
-                                .bold()
-                                .foregroundColor(.blue)
+                                .frame(width: 150, height: 150)
+//                          Text("Play")
+//                          .font(.custom("LilitaOne", size: 50))
+//                          .foregroundColor(Color(hex: "#1794AD"))
+//                           Text("Highscore: \(highScore)")
+//                          .font(.custom("LilitaOne", size: 32))
+//                          .foregroundColor(Color(hex: "#1794AD"))
                         }
+                        .padding(.bottom, 120)
                     }
                 }
             }

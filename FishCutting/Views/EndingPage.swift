@@ -31,29 +31,31 @@ struct GameOverView: View {
             ZStack {
                 Image("game_over")
                 
-                VStack (alignment: .leading) {
+                VStack(alignment: .center, spacing: 20) {
                     if isNewRecord {
                         Text("NEW HIGHSCORE: \(displayedSatisfied)")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
+                            .font(.custom("LilitaOne", size: 30))
+                            .foregroundColor(Color(hex: "#1794AD"))
                     } else {
                         Text("HIGHSCORE: \(previousHighScore)")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
+                            .font(.custom("LilitaOne", size: 30))
+                            .foregroundColor(Color(hex: "#1794AD"))
                     }
                     
                     Text("YOUR SCORE: \(displayedSatisfied)")
-                        .font(.title3)
-                        .foregroundColor(.black)
+                        .font(.custom("LilitaOne", size: 24))
+                        .foregroundColor(Color(hex: "#1794AD"))
                 }
-            }
-
-            Button {
-                onRestart()
-            } label: {
-                Image("play_again_button")
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+                .padding(.bottom, 50)
+                
+                Button {
+                    onRestart()
+                } label: {
+                    Image("play_again_button")
+                }
+                .offset(x: 0, y: 100)
             }
         }
         .onAppear {

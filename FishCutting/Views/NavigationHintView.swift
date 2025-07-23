@@ -23,15 +23,14 @@ struct NavigationHintView: View {
             if !isPlaying {
                 // Middle layer: semi-transparent overlay
                 Rectangle()
-                    .fill(Color.black.opacity(0.9))
+                    .fill(Color.black.opacity(0.8))
                     .ignoresSafeArea()
                 
                 // Top layer: play UI
                 VStack {
                     Text("Tap To Cut The Fish")
                         .lineSpacing(10)
-                        .font(.custom("Georgia", size: 40))
-                        .bold()
+                        .font(.custom("LilitaOne", size: 40))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                 }

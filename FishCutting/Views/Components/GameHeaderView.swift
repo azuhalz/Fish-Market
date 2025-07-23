@@ -9,40 +9,46 @@ struct GameHeaderView: View {
     
     var body: some View {
         HStack {
-            Text("Highscore: \(currentHighScore)")
-                .font(.body)
-                .fontWeight(.medium)
+            ZStack {
+                TextStroke(
+                    text: "Highest: \n \(currentHighScore)",
+                    width: 2.0,
+                    color: Color(hex: "#966631")
+                )
+                .font(.custom("LilitaOne", size: 24))
                 .foregroundColor(.white)
                 .padding(10)
-                .background(Color.orange)
                 .cornerRadius(10)
+                .offset(x: 0, y: -30)
+                .multilineTextAlignment(.center)
+            }
             
             Spacer()
             
             Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.custom("Micro5-Regular", size: 36))
                 .foregroundColor(.black)
-//                .padding(10)
-//                .background(Color.orange)
-//                .cornerRadius(10)
-                .offset(x: -18, y: -8)
-            
+                .offset(x: -5, y: -25)
+        
             Spacer()
             
             ZStack {
-                Text("Score: \(satisfiedCount)")
-                    .font(.body)
-                    .fontWeight(.medium)
-                    .foregroundColor(.white)
-                    .padding(10)
-                    .background(Color.orange)
-                    .cornerRadius(10)
+                TextStroke(
+                    text: "Score: \n \(satisfiedCount)",
+                    width: 2.0,
+                    color: Color(hex: "#966631")
+                )
+                .font(.custom("LilitaOne", size: 24))
+                .foregroundColor(.white)
+                .padding(10)
+                .cornerRadius(10)
+                .offset(x: 0, y: -30)
+                .multilineTextAlignment(.center)
                 
                 if showPlusOne {
                     Text("+1")
-                        .font(.title3)
-                        .foregroundColor(.yellow)
+                        .font(.custom("LilitaOne", size: 18))
+                        .foregroundColor(.white)
                         .offset(y: plusOneOffset)
                         .transition(.opacity)
                 }
@@ -52,11 +58,30 @@ struct GameHeaderView: View {
     }
 }
 
+struct TextStroke: View {
+    let text: String
+    let width: CGFloat
+    let color: Color
+    
+    var body: some View {
+        ZStack {
+            ZStack {
+                Text(text).offset(x: width, y: width)
+                Text(text).offset(x: -width, y: -width)
+                Text(text).offset(x: -width, y: width)
+                Text(text).offset(x: width, y: -width)
+            }
+            .foregroundColor(color)
+            Text(text)
+        }
+    }
+}
+
 #Preview {
     GameHeaderView(
         timeRemaining: 45,
-        currentHighScore: 12,
-        satisfiedCount: 8,
+        currentHighScore: 99,
+        satisfiedCount: 99,
         showPlusOne: true,
         plusOneOffset: -20
     )

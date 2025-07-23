@@ -55,7 +55,7 @@ struct FishCuttingGameView: View {
     var body: some View {
         ZStack {
             // Background
-//            Color.yellow.opacity(0.3).ignoresSafeArea()
+            //Color.yellow.opacity(0.3).ignoresSafeArea()
             Image("background_top")
                 .resizable()
                 .scaledToFill()
@@ -512,9 +512,7 @@ struct FishCuttingGameView: View {
         customerOpacity = 0
         fishOffsetX = 400
         audioManager.playBackgroundMusic()
-        
-        // ✅ These two lines are CRUCIAL for the fish to reappear
-        fishOffsetX = 400
+
         isAnimatingFish = false
 
         // Animate customer and fish entrance

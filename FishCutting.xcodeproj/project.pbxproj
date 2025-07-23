@@ -37,6 +37,22 @@
 			);
 			target = A09E79772E1F982C001951E5 /* FishCutting */;
 		};
+		DB1DE3932E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Fonts/LilitaOne-Regular.ttf",
+				"Fonts/Micro5-Regular.ttf",
+			);
+			target = A09E79842E1F982C001951E5 /* FishCuttingTests */;
+		};
+		DB1DE3942E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Fonts/LilitaOne-Regular.ttf",
+				"Fonts/Micro5-Regular.ttf",
+			);
+			target = A09E798E2E1F982C001951E5 /* FishCuttingUITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -44,6 +60,8 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				A0672D4B2E2800C700D934A3 /* Exceptions for "FishCutting" folder in "FishCutting" target */,
+				DB1DE3932E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingTests" target */,
+				DB1DE3942E30BA7A0088AF5B /* Exceptions for "FishCutting" folder in "FishCuttingUITests" target */,
 			);
 			path = FishCutting;
 			sourceTree = "<group>";
@@ -390,9 +408,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 89WYA959C9;
+				DEVELOPMENT_TEAM = N8J2WM3HAX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FishCutting/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -419,9 +438,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 89WYA959C9;
+				DEVELOPMENT_TEAM = N8J2WM3HAX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FishCutting/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

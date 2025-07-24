@@ -21,8 +21,8 @@ struct CustomerView: View {
                     .offset(y: 40)
                 
                 Text(customerMessage)
-                    .font(.title2)
-                    .fontWeight(.medium)
+                    .font(.body)
+                    .fontWeight(.bold)
                     .foregroundColor(Color(hex: "#1794AD"))
                     .offset(y: 35)
                 

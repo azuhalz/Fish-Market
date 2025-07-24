@@ -41,7 +41,6 @@ struct FishCuttingGameView: View {
     @State private var showDashedLines = false
     @State private var showTimesUp = false
 
-    
     @Binding var isPlaying: Bool
     
     @Environment(\.modelContext) private var context
@@ -57,16 +56,13 @@ struct FishCuttingGameView: View {
     var body: some View {
         ZStack {
             // Background
-            //Color.yellow.opacity(0.3).ignoresSafeArea()
-            Image("background_top")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+            Color.yellow.opacity(0.3).ignoresSafeArea()
             
             Image("background_behind")
                 .resizable()
                 .scaledToFill()
                 .offset(y: -15)
+                .ignoresSafeArea()
 
             Image("background_top")
                 .resizable()
@@ -81,8 +77,6 @@ struct FishCuttingGameView: View {
                     showPlusOne: showPlusOne,
                     plusOneOffset: plusOneOffset
                 )
-                
-                Spacer().frame(height: 20)
                 
                 ZStack(alignment: .top) {
                     Color.clear.frame(height: 200)

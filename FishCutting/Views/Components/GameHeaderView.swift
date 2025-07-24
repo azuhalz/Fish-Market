@@ -19,16 +19,24 @@ struct GameHeaderView: View {
                 .foregroundColor(.white)
                 .padding(10)
                 .cornerRadius(10)
-                .offset(x: 0, y: -30)
+                .offset(x: 0, y: -50)
                 .multilineTextAlignment(.center)
             }
             
             Spacer()
             
-            Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
-                .font(.custom("Micro5-Regular", size: 36))
-                .foregroundColor(.black)
-                .offset(x: -5, y: -25)
+            ZStack {
+                Image("timer")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 120)
+                    .offset(x: -10, y: -50)
+                
+                Text(String(format: "%02d:%02d", timeRemaining / 60, timeRemaining % 60))
+                    .font(.custom("Micro5-Regular", size: 36))
+                    .foregroundColor(.black)
+                    .offset(x: -10, y: -50)
+            }
         
             Spacer()
             
@@ -42,7 +50,7 @@ struct GameHeaderView: View {
                 .foregroundColor(.white)
                 .padding(10)
                 .cornerRadius(10)
-                .offset(x: 0, y: -30)
+                .offset(x: 0, y: -50)
                 .multilineTextAlignment(.center)
                 
                 if showPlusOne {

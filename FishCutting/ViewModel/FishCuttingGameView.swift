@@ -41,7 +41,6 @@ struct FishCuttingGameView: View {
     @State private var showDashedLines = false
     @State private var showTimesUp = false
 
-    
     @Binding var isPlaying: Bool
     
     @Environment(\.modelContext) private var context
@@ -51,22 +50,19 @@ struct FishCuttingGameView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var knifeTimer: Timer?
     
-    private let audioManager = AudioManager()
+    private let audioManager = AudioManager.shared
     private let hapticManager = HapticManager()
     
     var body: some View {
         ZStack {
             // Background
-            //Color.yellow.opacity(0.3).ignoresSafeArea()
-            Image("background_top")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+            Color.yellow.opacity(0.3).ignoresSafeArea()
             
             Image("background_behind")
                 .resizable()
                 .scaledToFill()
                 .offset(y: -15)
+                .ignoresSafeArea()
 
             Image("background_top")
                 .resizable()
@@ -81,8 +77,6 @@ struct FishCuttingGameView: View {
                     showPlusOne: showPlusOne,
                     plusOneOffset: plusOneOffset
                 )
-                
-                Spacer().frame(height: 20)
                 
                 ZStack(alignment: .top) {
                     Color.clear.frame(height: 200)
@@ -231,7 +225,10 @@ struct FishCuttingGameView: View {
         customerOpacity = 0
         showDashedLines = false
         isKnifeMoving = false
-        audioManager.playBackgroundMusic()
+        if audioManager.bgAudioPlayer == nil {
+            audioManager.playBackgroundMusic()
+
+        }
         
         // Animate both customer and fish entrance together
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -408,10 +405,8 @@ struct FishCuttingGameView: View {
             print("✅ Memanggil haptic untuk customer yang puas")
             satisfiedCount += 1
             
-            let previousScore = scoreManager.getHighScore()
-
             scoreManager.updateHighScore(satisfiedCount)
-            currentHighScore = previousScore // ← Pass this to GameOverView
+            currentHighScore = scoreManager.getHighScore() // 
             
             triggerPlusOneAnimation()
             
@@ -419,9 +414,6 @@ struct FishCuttingGameView: View {
                 tracker.totalSatisfied += 1
                 try? context.save()
             }
-        } else {
-            print("❌ Customer tidak puas. Memanggil playUnsatisfiedHaptic()")
-            hapticManager.playUnsatisfiedHaptic()
         }
     }
     
@@ -448,7 +440,9 @@ struct FishCuttingGameView: View {
     // MARK: - Round Management
     private func startNextRound() {
         if audioManager.bgAudioPlayer?.isPlaying != true {
+            print(">>> Mulai lagu background")
             audioManager.playBackgroundMusic()
+            print(">>> Lagu background stop")
         }
         fishCuts = []
         isCutting = false
@@ -573,6 +567,7 @@ struct FishCuttingGameView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
+            print("Background 2")
             audioManager.playBackgroundMusic()
         }
     }

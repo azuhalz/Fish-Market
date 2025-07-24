@@ -214,8 +214,6 @@ struct FishCuttingGameView: View {
         }
         
         hapticManager.prepareHaptics()
-        //startKnifeMovement()
-//        audioManager.playBackgroundMusic()
         showFirstCustomer()
     }
     
@@ -549,7 +547,6 @@ struct FishCuttingGameView: View {
         customerOffset = 300
         customerOpacity = 0
         fishOffsetX = 400
-        audioManager.playBackgroundMusic()
 
         isAnimatingFish = false
 

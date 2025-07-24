@@ -18,19 +18,19 @@ struct CustomerView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 250, height: 100)
-                    .offset(y: 5)
+                    .offset(y: 40)
                 
                 Text(customerMessage)
                     .font(.title2)
                     .fontWeight(.medium)
-//                    .foregroundColor(.black)
                     .foregroundColor(Color(hex: "#1794AD"))
+                    .offset(y: 35)
                 
                 Image("name_\(currentCustomerIndex)")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 80, height: 30)
-                    .offset(x: -80, y: -30)
+                    .frame(width: 80, height: 25)
+                    .offset(x: -80, y: 5)
             }
             .offset(x: customerOffset)
             .opacity(customerOpacity)
@@ -40,7 +40,7 @@ struct CustomerView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 225, height: 225)
-                .offset(x: customerOffset, y: 45)
+                .offset(x: customerOffset, y: 20)
                 .opacity(customerOpacity)
                 .animation(.easeInOut(duration: 0.3), value: customerState)
                 .onAppear {

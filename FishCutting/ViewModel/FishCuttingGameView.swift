@@ -447,9 +447,9 @@ struct FishCuttingGameView: View {
     
     // MARK: - Round Management
     private func startNextRound() {
-//        if audioManager.bgAudioPlayer?.isPlaying != true {
-//            audioManager.playBackgroundMusic()
-//        }
+        if audioManager.bgAudioPlayer?.isPlaying != true {
+            audioManager.playBackgroundMusic()
+        }
         fishCuts = []
         isCutting = false
         showCutResult = false

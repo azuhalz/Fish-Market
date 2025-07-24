@@ -51,7 +51,7 @@ struct FishCuttingGameView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var knifeTimer: Timer?
     
-    private let audioManager = AudioManager()
+    private let audioManager = AudioManager.shared
     private let hapticManager = HapticManager()
     
     var body: some View {
@@ -231,7 +231,10 @@ struct FishCuttingGameView: View {
         customerOpacity = 0
         showDashedLines = false
         isKnifeMoving = false
-        audioManager.playBackgroundMusic()
+        if audioManager.bgAudioPlayer == nil {
+            audioManager.playBackgroundMusic()
+
+        }
         
         // Animate both customer and fish entrance together
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -448,7 +451,9 @@ struct FishCuttingGameView: View {
     // MARK: - Round Management
     private func startNextRound() {
         if audioManager.bgAudioPlayer?.isPlaying != true {
+            print(">>> Mulai lagu background")
             audioManager.playBackgroundMusic()
+            print(">>> Lagu background stop")
         }
         fishCuts = []
         isCutting = false
@@ -573,6 +578,7 @@ struct FishCuttingGameView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
+            print("Background 2")
             audioManager.playBackgroundMusic()
         }
     }

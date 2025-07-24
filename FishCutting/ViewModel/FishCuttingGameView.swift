@@ -4,7 +4,7 @@ import _SwiftData_SwiftUI
 struct FishCuttingGameView: View {
     @StateObject private var scoreManager = ScoreManager()
 
-    @State private var timeRemaining = 60
+    @State private var timeRemaining = 10
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = false
     @State private var fishCuts: [CGFloat] = []
@@ -382,7 +382,7 @@ struct FishCuttingGameView: View {
             if timeRemaining > 0 {
                 startNextRound()
             } else {
-                showScore = true
+//                showScore = true
             }
         }
     }

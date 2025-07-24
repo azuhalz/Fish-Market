@@ -379,7 +379,7 @@ struct FishCuttingGameView: View {
             if timeRemaining > 0 {
                 startNextRound()
             } else {
-                showScore = true
+//                showScore = true
             }
         }
     }

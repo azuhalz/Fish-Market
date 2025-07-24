@@ -1,6 +1,19 @@
 import AVFoundation
 
+class WilkesAudioPlayer:ObservableObject {
+    static var itCanBeAnything = WilkesAudioPlayer()
+    
+}
+//
+//var audioManager2 = AudioManager()
+//
+//var audioManager3 = WilkesAudioPlayer.shared
+//
+//var audioManager4 = WilkesAudioPlayer.shared
+
+
 class AudioManager: ObservableObject {
+    static var shared = AudioManager()
     private var cutAudioPlayer: AVAudioPlayer?
     private var fishAudioPlayer: AVAudioPlayer?
     var bgAudioPlayer: AVAudioPlayer?
@@ -8,21 +21,28 @@ class AudioManager: ObservableObject {
     private var timesUpPlayer: AVAudioPlayer?
     
     
-    
     func playBackgroundMusic() {
         guard let soundURL = Bundle.main.url(forResource: "background_music", withExtension: "mp3") else {
             print("Background music file not found")
             return
         }
-        
-        do {
-            bgAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-            bgAudioPlayer?.numberOfLoops = -1 // Loop indefinitely
+
+        if bgAudioPlayer == nil {
+            do {
+                bgAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                bgAudioPlayer?.numberOfLoops = -1 // Loop indefinitely
+                bgAudioPlayer?.prepareToPlay()
+                bgAudioPlayer?.volume = 0.5
+                bgAudioPlayer?.play()
+                print("🎵 Background music started")
+            } catch {
+                print("Failed to play background music: \(error.localizedDescription)")
+            }
+        } else if bgAudioPlayer?.isPlaying == false {
             bgAudioPlayer?.play()
-        } catch {
-            print("Failed to play background music: \(error.localizedDescription)")
         }
     }
+
     
     func playCutSound() {
         guard let soundURL = Bundle.main.url(forResource: "cut_sound", withExtension: "wav") else {

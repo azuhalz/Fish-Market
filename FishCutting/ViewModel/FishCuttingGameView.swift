@@ -405,10 +405,8 @@ struct FishCuttingGameView: View {
             print("✅ Memanggil haptic untuk customer yang puas")
             satisfiedCount += 1
             
-            let previousScore = scoreManager.getHighScore()
-
             scoreManager.updateHighScore(satisfiedCount)
-            currentHighScore = previousScore // ← Pass this to GameOverView
+            currentHighScore = scoreManager.getHighScore() // 
             
             triggerPlusOneAnimation()
             
@@ -416,9 +414,6 @@ struct FishCuttingGameView: View {
                 tracker.totalSatisfied += 1
                 try? context.save()
             }
-        } else {
-            print("❌ Customer tidak puas. Memanggil playUnsatisfiedHaptic()")
-            hapticManager.playUnsatisfiedHaptic()
         }
     }
     

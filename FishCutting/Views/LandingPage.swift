@@ -12,14 +12,13 @@ struct LandingPage: View {
     var body: some View {
         ZStack {
             Image("background_landing_page")
+                .resizable()
+                .scaledToFill()
                 .ignoresSafeArea(edges: .all)
             
             if showHintView {
                 NavigationHintView()
             } else {
-//                Color.yellow.opacity(0.3)
-//                .ignoresSafeArea()
-
                 VStack(spacing: 20) {
                     Image("logo")
 

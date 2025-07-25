@@ -4,6 +4,7 @@ import SwiftData
 struct LandingPage: View {
     @Query var trackers: [SatisfiedTracker]
     @State private var showHintView = false
+    private let audioManager = AudioManager.shared
     
     var highScore: Int {
         trackers.map { $0.totalSatisfied }.max() ?? 0
@@ -24,6 +25,7 @@ struct LandingPage: View {
 
                     Button {
                         showHintView = true
+                        audioManager.stopLandingMusic()
                     } label: {
                         VStack {
                             Image("play_button")
@@ -40,6 +42,9 @@ struct LandingPage: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            audioManager.playLandingMusic()
         }
     }
 }

@@ -22,7 +22,7 @@ struct CustomerView: View {
                 
                 Text(customerMessage)
 //                    .font(.custom("LilitaOne", size: 24))
-                    .font(.title3)
+                    .font(.body)
                     .fontWeight(.bold)
                     .foregroundColor(Color(hex: "#1794AD"))
                     .offset(y: 35)

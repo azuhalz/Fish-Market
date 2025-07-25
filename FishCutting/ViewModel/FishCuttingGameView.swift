@@ -61,7 +61,8 @@ struct FishCuttingGameView: View {
             Image("background_behind")
                 .resizable()
                 .scaledToFill()
-                .offset(y: -15)
+                .offset(y:10)
+                .scaleEffect(1.1)
                 .ignoresSafeArea()
 
             Image("background_top")
@@ -77,7 +78,7 @@ struct FishCuttingGameView: View {
                     showPlusOne: showPlusOne,
                     plusOneOffset: plusOneOffset
                 )
-                
+                                
                 ZStack(alignment: .top) {
                     Color.clear.frame(height: 200)
                     

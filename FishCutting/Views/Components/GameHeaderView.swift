@@ -19,7 +19,7 @@ struct GameHeaderView: View {
                         width: 1.5,
                         color: Color(hex: "#966631")
                     )
-                    .font(.custom("LilitaOne", size: 24))
+                    .font(.custom("LilitaOne", size: 19.4))
                     .foregroundColor(.white)
                     .padding(10)
                     .cornerRadius(10)

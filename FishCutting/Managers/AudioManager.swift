@@ -7,6 +7,7 @@ class AudioManager: ObservableObject {
     var bgAudioPlayer: AVAudioPlayer?
     private var plusOnePlayer: AVAudioPlayer?
     private var timesUpPlayer: AVAudioPlayer?
+    private var landingAudioPlayer: AVAudioPlayer?
     
     
     func playBackgroundMusic() {
@@ -85,7 +86,27 @@ class AudioManager: ObservableObject {
         }
     }
 
+    func playLandingMusic() {
+        guard let soundURL = Bundle.main.url(forResource: "landing_music", withExtension: "mp3") else {
+            print("❌ Landing background music file not found")
+            return
+        }
 
+        if landingAudioPlayer == nil {
+            do {
+                landingAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                landingAudioPlayer?.numberOfLoops = -1 // Loop indefinitely
+                landingAudioPlayer?.prepareToPlay()
+                landingAudioPlayer?.volume = 0.7
+                landingAudioPlayer?.play()
+                print("✅ Landing background music started")
+            } catch {
+                print("❌ Failed to play landing background music: \(error.localizedDescription)")
+            }
+        } else if landingAudioPlayer?.isPlaying == false {
+            landingAudioPlayer?.play()
+        }
+    }
 
     
     func stopFishSound() {
@@ -94,6 +115,10 @@ class AudioManager: ObservableObject {
     
     func stopBackgroundMusic() {
         bgAudioPlayer?.stop()
+    }
+    
+    func stopLandingMusic() {
+        landingAudioPlayer?.stop()
     }
     
     func stopAllSounds() {

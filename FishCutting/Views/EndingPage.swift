@@ -25,19 +25,19 @@ struct GameOverView: View {
                 Image("game_over")
                 
                 VStack(alignment: .center, spacing: 20) {
+                    
+                    Text("YOUR SCORE: \(displayedSatisfied)")
+                        .font(.custom("LilitaOne", size: 30))
+                        .foregroundColor(Color(hex: "#1794AD"))
                     if isNewRecord {
                         Text("NEW HIGHSCORE: \(displayedSatisfied)")
-                            .font(.custom("LilitaOne", size: 30))
+                            .font(.custom("LilitaOne", size: 24))
                             .foregroundColor(Color(hex: "#1794AD"))
                     } else {
                         Text("HIGHSCORE: \(previousHighScore)")
-                            .font(.custom("LilitaOne", size: 30))
+                            .font(.custom("LilitaOne", size: 24))
                             .foregroundColor(Color(hex: "#1794AD"))
                     }
-                    
-                    Text("YOUR SCORE: \(displayedSatisfied)")
-                        .font(.custom("LilitaOne", size: 24))
-                        .foregroundColor(Color(hex: "#1794AD"))
                 }
                 .frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)

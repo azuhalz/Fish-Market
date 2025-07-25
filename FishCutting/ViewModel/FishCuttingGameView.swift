@@ -22,7 +22,7 @@ struct FishCuttingGameView: View {
     @State private var fishOffset: CGFloat = 0
     @State private var currentCustomerIndex = 1
     @State private var customerIsSatisfied = false
-    @State private var customerMessage = "Please cut into 3"
+    @State private var customerMessage = "Please cut it perfectly!"
     @State private var roundInProgress = true
     @State private var transitionToNextCustomer = false
     @State private var satisfiedCount = 0
@@ -347,7 +347,8 @@ struct FishCuttingGameView: View {
         if fishCuts.count == requestedCuts - 1 {
             finishCutting()
         } else {
-            customerMessage = "\(requestedCuts - fishCuts.count - 1) more cut!"
+//            customerMessage = "\(requestedCuts - fishCuts.count - 1) more cut!"
+            customerMessage = "Please cut it perfectly!"
         }
     }
     
@@ -402,7 +403,7 @@ struct FishCuttingGameView: View {
         print("Customer is satisfied? \(customerIsSatisfied)")
         
         if customerIsSatisfied {
-            print("✅ Memanggil haptic untuk customer yang puas")
+            print("✅ Haptics Satisfied ")
             satisfiedCount += 1
             
             scoreManager.updateHighScore(satisfiedCount)
@@ -440,9 +441,7 @@ struct FishCuttingGameView: View {
     // MARK: - Round Management
     private func startNextRound() {
         if audioManager.bgAudioPlayer?.isPlaying != true {
-            print(">>> Mulai lagu background")
             audioManager.playBackgroundMusic()
-            print(">>> Lagu background stop")
         }
         fishCuts = []
         isCutting = false
@@ -450,7 +449,7 @@ struct FishCuttingGameView: View {
         roundInProgress = true
         customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
-        customerMessage = "Please cut into \(requestedCuts)"
+        customerMessage = "Please cut it perfectly!"
         currentCustomerIndex = Int.random(in: 1...GameConstants.maxCustomers)
         currentFishIndex = Int.random(in: 1...GameConstants.maxFishTypes)
         knifePosition = 0
@@ -513,7 +512,7 @@ struct FishCuttingGameView: View {
         isPlaying = false
         customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
-        customerMessage = "Please cut into \(requestedCuts)"
+        customerMessage = "Please cut it perfectly!"
         timeRemaining = GameConstants.gameDuration
         fishCuts = []
         score = 0
@@ -567,7 +566,6 @@ struct FishCuttingGameView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
-            print("Background 2")
             audioManager.playBackgroundMusic()
         }
     }

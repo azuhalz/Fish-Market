@@ -61,7 +61,6 @@ struct GameHeaderView: View {
                     )
                     .font(.custom("LilitaOne", size: 19.4))
                     .foregroundColor(.white)
-                    .lineSpacing(4) // ✅ Better line spacing
                     .multilineTextAlignment(.center)
                     .padding(10)
                     .frame(maxWidth: .infinity)

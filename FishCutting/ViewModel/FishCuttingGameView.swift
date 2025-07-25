@@ -348,7 +348,12 @@ struct FishCuttingGameView: View {
         if fishCuts.count == requestedCuts - 1 {
             finishCutting()
         } else {
-            customerMessage = "\(requestedCuts - fishCuts.count - 1) more cut!"
+            if requestedCuts - fishCuts.count - 1 > 1 {
+                customerMessage = "\(requestedCuts - fishCuts.count - 1) more cuts!"
+            }
+            else {
+                customerMessage = "\(requestedCuts - fishCuts.count - 1) more cut!"
+            }
         }
     }
     

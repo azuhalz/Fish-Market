@@ -56,7 +56,7 @@ struct CustomerView: View {
     VStack(spacing: 20) {
         // Preview asking state
         CustomerView(
-            customerMessage: "Please cut into 3",
+            customerMessage: "Please cut it perfectly!",
             currentCustomerIndex: 1,
             customerState: .asking,
             customerOffset: 0,

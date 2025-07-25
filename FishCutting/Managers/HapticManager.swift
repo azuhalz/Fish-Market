@@ -5,18 +5,18 @@ class HapticManager: ObservableObject {
     var hapticEngine: CHHapticEngine?
     
     func prepareHaptics() {
-        print("🛠 prepareHaptics() dipanggil")
+        print("✅ prepareHaptics() started")
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else {
-            print("Haptics not supported on this device")
+            print("❌ Haptics not supported on this device")
             return
         }
         
         do {
             hapticEngine = try CHHapticEngine()
             try hapticEngine?.start()
-            print("✅ hapticEngine berhasil dimulai")
+            print("✅ hapticEngine Stared")
         } catch {
-            print("❌ Gagal memulai hapticEngine: \(error.localizedDescription)")
+            print("❌ Failed hapticEngine: \(error.localizedDescription)")
         }
     }
     
@@ -39,12 +39,12 @@ class HapticManager: ObservableObject {
             let player = try hapticEngine?.makePlayer(with: pattern)
             try player?.start(atTime: 0)
         } catch {
-            print("Failed to play haptic feedback: \(error.localizedDescription)")
+            print("❌ Failed to play haptic feedback: \(error.localizedDescription)")
         }
     }
     
     func playUnsatisfiedHaptic() {
-        print("🔔 playUnsatisfiedHaptic (UIKit) dijalankan")
+        print("✅ playUnsatisfiedHaptic Started")
 
         let generator = UIImpactFeedbackGenerator(style: .rigid)
         generator.prepare()

@@ -78,7 +78,7 @@ struct GameOverView: View {
     // MARK: - Audio Functions
     func playCounterSoundLooping() {
         guard let url = Bundle.main.url(forResource: "Counter_Sound", withExtension: "mp4") else {
-            print("⚠️ Counter_Sound.mp4 not found in bundle.")
+            print("❌ Counter Sound file not found")
             return
         }
 
@@ -110,7 +110,7 @@ struct GameOverView: View {
         satisfiedCount: 15,
         previousHighScore: 10,
         onRestart: {
-            print("Restart tapped")
+            print("✅ Game Restart")
         }
     )
 }

@@ -17,21 +17,21 @@ struct CustomerView: View {
                 Image("text_bubble")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 250, height: 100)
+                    .frame(width: 350, height: 110)
                     .offset(y: 40)
                 
                 Text(customerMessage)
 //                    .font(.custom("LilitaOne", size: 24))
-                    .font(.body)
+                    .font(.title3)
                     .fontWeight(.bold)
                     .foregroundColor(Color(hex: "#1794AD"))
-                    .offset(y: 35)
+                    .offset(y: 30)
                 
                 Image("name_\(currentCustomerIndex)")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 80, height: 25)
-                    .offset(x: -80, y: 5)
+                    .offset(x: -110, y: 0-8)
             }
             .offset(x: customerOffset)
             .opacity(customerOpacity)
@@ -69,7 +69,7 @@ struct CustomerView: View {
         
         // Preview satisfied state
         CustomerView(
-            customerMessage: "Thank you!",
+            customerMessage: "😊 Thank you! That looks amazing!",
             currentCustomerIndex: 1,
             customerState: .satisfied,
             customerOffset: 0,

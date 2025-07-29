@@ -3,8 +3,8 @@ import _SwiftData_SwiftUI
 
 struct FishCuttingGameView: View {
     @StateObject private var scoreManager = ScoreManager()
-
-    @State private var timeRemaining = 60
+    
+    @State private var timeRemaining = 5
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = false
     @State private var fishCuts: [CGFloat] = []
@@ -40,7 +40,7 @@ struct FishCuttingGameView: View {
     @State private var customerState: CustomerState = .asking
     @State private var showDashedLines = false
     @State private var showTimesUp = false
-
+    
     @Binding var isPlaying: Bool
     
     @Environment(\.modelContext) private var context
@@ -64,7 +64,7 @@ struct FishCuttingGameView: View {
                 .offset(y:10)
                 .scaleEffect(1.1)
                 .ignoresSafeArea()
-
+            
             Image("background_top")
                 .resizable()
                 .scaledToFill()
@@ -78,7 +78,7 @@ struct FishCuttingGameView: View {
                     showPlusOne: showPlusOne,
                     plusOneOffset: plusOneOffset
                 )
-                                
+                
                 ZStack(alignment: .top) {
                     Color.clear.frame(height: 200)
                     
@@ -146,7 +146,7 @@ struct FishCuttingGameView: View {
                         }
                         .offset(x: 32, y: -10)
                     }
-                    .allowsHitTesting(false)
+                        .allowsHitTesting(false)
                 )
                 
                 Spacer()
@@ -157,7 +157,7 @@ struct FishCuttingGameView: View {
                 ZStack {
                     Color.black.opacity(0.6)
                         .ignoresSafeArea()
-
+                    
                     Image("Times_Up")
                         .resizable()
                         .scaledToFit()
@@ -167,7 +167,7 @@ struct FishCuttingGameView: View {
                 }
                 .zIndex(15)
             }
-          
+            
             if showScore {
                 ZStack {
                     Color.black.opacity(0.6).ignoresSafeArea()
@@ -228,7 +228,7 @@ struct FishCuttingGameView: View {
         isKnifeMoving = false
         if audioManager.bgAudioPlayer == nil {
             audioManager.playBackgroundMusic()
-
+            
         }
         
         // Animate both customer and fish entrance together
@@ -278,7 +278,7 @@ struct FishCuttingGameView: View {
             guard isKnifeMoving else { return }
             
             let speed: CGFloat = timeRemaining <= GameConstants.speedUpThreshold ?
-                GameConstants.fastKnifeSpeed : GameConstants.normalKnifeSpeed
+            GameConstants.fastKnifeSpeed : GameConstants.normalKnifeSpeed
             
             knifePosition += speed * knifeDirection
             let maxKnife = GameConstants.fishWidth
@@ -325,14 +325,14 @@ struct FishCuttingGameView: View {
               !isCutting,
               roundInProgress,
               !showCutResult else { return }
-
+        
         let id = UUID()
         cutParticles[id] = CGPoint(x: knifePosition + 27, y: 120)
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             cutParticles.removeValue(forKey: id)
         }
-      
+        
         audioManager.playCutSound()
         playCutHaptic()
         
@@ -367,10 +367,10 @@ struct FishCuttingGameView: View {
         if !customerIsSatisfied {
             hapticManager.playUnsatisfiedHaptic()
         }
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             showCutResult = true
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation(.easeInOut(duration: 0.5)) {
                     // Synchronize both customer and fish sliding out
@@ -385,7 +385,7 @@ struct FishCuttingGameView: View {
             if timeRemaining > 0 {
                 startNextRound()
             } else {
-//                showScore = true
+                //                showScore = true
             }
         }
     }
@@ -412,7 +412,7 @@ struct FishCuttingGameView: View {
             satisfiedCount += 1
             
             scoreManager.updateHighScore(satisfiedCount)
-            currentHighScore = scoreManager.getHighScore() // 
+            currentHighScore = scoreManager.getHighScore() //
             
             triggerPlusOneAnimation()
             
@@ -491,7 +491,7 @@ struct FishCuttingGameView: View {
             startKnifeMovement()
         }
     }
-
+    
     // MARK: - Game Control
     private func endGame() {
         if !isKnifeMoving {
@@ -511,8 +511,8 @@ struct FishCuttingGameView: View {
             showScore = true
         }
     }
-
-
+    
+    
     private func resetGame() {
         isPlaying = false
         customerState = .asking
@@ -545,9 +545,9 @@ struct FishCuttingGameView: View {
         customerOffset = 300
         customerOpacity = 0
         fishOffsetX = 400
-
+        
         isAnimatingFish = false
-
+        
         // Animate customer and fish entrance
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             withAnimation(.easeOut(duration: 0.5)) {

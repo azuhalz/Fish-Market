@@ -11,41 +11,44 @@ struct LandingPage: View {
     }
 
     var body: some View {
-        ZStack {
-            Image("background_landing_page")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea(edges: .all)
-            
-            if showHintView {
-                NavigationHintView()
-            } else {
-                VStack(spacing: 20) {
-                    Image("logo")
-
-                    Button {
-                        showHintView = true
-                        audioManager.stopLandingMusic()
-                    } label: {
-                        VStack {
-                            Image("play_button")
-                                .resizable()
-                                .frame(width: 150, height: 150)
-//                          Text("Play")
-//                          .font(.custom("LilitaOne", size: 50))
-//                          .foregroundColor(Color(hex: "#1794AD"))
-//                           Text("Highscore: \(highScore)")
-//                          .font(.custom("LilitaOne", size: 32))
-//                          .foregroundColor(Color(hex: "#1794AD"))
+        NavigationStack {
+            ZStack {
+                Image("background_landing_page")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea(edges: .all)
+                
+                if showHintView {
+                    NavigationHintView()
+                } else {
+                    VStack(spacing: 20) {
+                        Image("logo")
+                        
+                        Button {
+                            showHintView = true
+                            audioManager.stopLandingMusic()
+                        } label: {
+                            VStack {
+                                Image("play_button")
+                                    .resizable()
+                                    .frame(width: 150, height: 150)
+                                //                          Text("Play")
+                                //                          .font(.custom("LilitaOne", size: 50))
+                                //                          .foregroundColor(Color(hex: "#1794AD"))
+                                //                           Text("Highscore: \(highScore)")
+                                //                          .font(.custom("LilitaOne", size: 32))
+                                //                          .foregroundColor(Color(hex: "#1794AD"))
+                            }
+                            .padding(.bottom, 120)
                         }
-                        .padding(.bottom, 120)
                     }
                 }
             }
+            .onAppear {
+                audioManager.playLandingMusic()
+            }
         }
-        .onAppear {
-            audioManager.playLandingMusic()
-        }
+        .navigationBarBackButtonHidden(true)
     }
 }
 

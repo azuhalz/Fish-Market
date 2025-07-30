@@ -3,7 +3,6 @@ import _SwiftData_SwiftUI
 
 struct FishCuttingGameView: View {
     @StateObject private var scoreManager = ScoreManager()
-    
     @State private var timeRemaining = 60
     @State private var knifePosition: CGFloat = 0
     @State private var isKnifeMoving = false
@@ -40,7 +39,6 @@ struct FishCuttingGameView: View {
     @State private var customerState: CustomerState = .asking
     @State private var showDashedLines = false
     @State private var showTimesUp = false
-    
     @Binding var isPlaying: Bool
     
     @Environment(\.modelContext) private var context
@@ -52,6 +50,15 @@ struct FishCuttingGameView: View {
     
     private let audioManager = AudioManager.shared
     private let hapticManager = HapticManager()
+    
+    private let satisfiedMessages = [
+        "😊 Thank you! That looks amazing!", "🎉 Nice! Just what I wanted!", "🙌 Awesome job, chef!", "😍 Exactly what I asked for!", "🤩 You nailed it!"
+    ]
+
+    private let unsatisfiedMessages = [
+        "😤 Ugh, that’s not what I asked!", "😕 Hmm… not quite right", "😩 You ruined it!", "😠 Nooo, this is wrong!", "😑 This is so bad…"
+    ]
+
     
     var body: some View {
         ZStack {
@@ -99,7 +106,7 @@ struct FishCuttingGameView: View {
                         Image("background_bottom")
                             .resizable()
                             .scaledToFill()
-                            .offset(y: 125)
+                            .offset(y: 115)
                     }
                 }
                 .frame(height: 200)
@@ -361,11 +368,18 @@ struct FishCuttingGameView: View {
         calculateFinalScore()
         roundInProgress = false
         customerState = customerIsSatisfied ? .satisfied : .unsatisfied
-        customerMessage = customerIsSatisfied ? "Thank you" : "It's so bad"
+        
+        if customerIsSatisfied {
+            customerMessage = satisfiedMessages.randomElement() ?? "Thank you"
+        } else {
+            customerMessage = unsatisfiedMessages.randomElement() ?? "It’s so bad"
+        }
+        
         customerIsSatisfied = score >= GameConstants.satisfactionThreshold
         
         if !customerIsSatisfied {
             hapticManager.playUnsatisfiedHaptic()
+            audioManager.playUnsatisfiedSound()
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {

@@ -8,7 +8,7 @@ class AudioManager: ObservableObject {
     private var plusOnePlayer: AVAudioPlayer?
     private var timesUpPlayer: AVAudioPlayer?
     private var landingAudioPlayer: AVAudioPlayer?
-    
+    private var unsatisfiedPlayer: AVAudioPlayer?
     
     func playBackgroundMusic() {
         guard let soundURL = Bundle.main.url(forResource: "background_music", withExtension: "mp3") else {
@@ -49,7 +49,7 @@ class AudioManager: ObservableObject {
 
     
     func playPlusOneSound() {
-        guard let soundURL = Bundle.main.url(forResource: "point_up", withExtension: "wav") else {
+        guard let soundURL = Bundle.main.url(forResource: "satisfied_sound", withExtension: "wav") else {
             print("❌ Plus one sound file not found")
             return
         }
@@ -107,7 +107,21 @@ class AudioManager: ObservableObject {
             landingAudioPlayer?.play()
         }
     }
-
+    
+    func playUnsatisfiedSound() {
+            // Pastikan nama file dan ekstensi (wav/mp3) sesuai dengan file Anda
+            guard let soundURL = Bundle.main.url(forResource: "unsatisfied_sound", withExtension: "wav") else {
+                print("❌ Unsatisfied sound file not found")
+                return
+            }
+            
+            do {
+                unsatisfiedPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                unsatisfiedPlayer?.play()
+            } catch {
+                print("❌ Failed to play unsatisfied sound: \(error.localizedDescription)")
+            }
+        }
     
     func stopFishSound() {
         fishAudioPlayer?.stop()

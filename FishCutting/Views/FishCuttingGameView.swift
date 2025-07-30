@@ -48,7 +48,7 @@ struct FishCuttingGameView: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var knifeTimer: Timer?
     
-    private let audioManager = AudioManager.shared
+    @StateObject private var audioManager = AudioManager.shared
     private let hapticManager = HapticManager()
     
     private let satisfiedMessages = [
@@ -195,6 +195,7 @@ struct FishCuttingGameView: View {
             cutFish()
         }
         .onAppear {
+            audioManager.playBackgroundMusic()
             setupGame()
         }
         .onReceive(timer) { _ in

@@ -195,7 +195,9 @@ struct FishCuttingGameView: View {
             cutFish()
         }
         .onAppear {
-            audioManager.playBackgroundMusic()
+//            audioManager.playBackgroundMusic()
+//            audioManager.stopBackgroundMusic()
+//            audioManager.playBackgroundMusic()
             setupGame()
         }
         .onReceive(timer) { _ in
@@ -234,10 +236,11 @@ struct FishCuttingGameView: View {
         customerOpacity = 0
         showDashedLines = false
         isKnifeMoving = false
-        if audioManager.bgAudioPlayer == nil {
-            audioManager.playBackgroundMusic()
-            
-        }
+//        if audioManager.bgAudioPlayer == nil {
+//            audioManager.stopBackgroundMusic()
+//            audioManager.playBackgroundMusic()
+//            
+//        }
         
         // Animate both customer and fish entrance together
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -460,9 +463,10 @@ struct FishCuttingGameView: View {
     
     // MARK: - Round Management
     private func startNextRound() {
-        if audioManager.bgAudioPlayer?.isPlaying != true {
-            audioManager.playBackgroundMusic()
-        }
+//        if audioManager.bgAudioPlayer?.isPlaying != true {
+//            audioManager.stopBackgroundMusic()
+//            audioManager.playBackgroundMusic()
+//        }
         fishCuts = []
         isCutting = false
         showCutResult = false
@@ -529,6 +533,9 @@ struct FishCuttingGameView: View {
     
     
     private func resetGame() {
+//        audioManager.stopBackgroundMusic()
+//        audioManager.playBackgroundMusic()
+        
         isPlaying = false
         customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
@@ -586,7 +593,7 @@ struct FishCuttingGameView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
-            audioManager.playBackgroundMusic()
+//            audioManager.playBackgroundMusic()
         }
     }
 }

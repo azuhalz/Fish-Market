@@ -10,6 +10,7 @@ import SwiftData
 struct NavigationHintView: View {
     @State private var isPlaying = false
     @Query var trackers: [SatisfiedTracker]
+    @StateObject private var audioManager = AudioManager.shared
     
     var total: Int {
         trackers.first?.totalSatisfied ?? 0
@@ -38,6 +39,8 @@ struct NavigationHintView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                         withAnimation {
                             isPlaying = true
+                            audioManager.stopBackgroundMusic()
+                            audioManager.playBackgroundMusic()
                         }
                     }
                 }

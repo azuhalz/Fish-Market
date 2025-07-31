@@ -195,6 +195,8 @@ struct FishCuttingGameView: View {
             cutFish()
         }
         .onAppear {
+//            audioManager.playBackgroundMusic()
+            audioManager.stopBackgroundMusic()
             audioManager.playBackgroundMusic()
             setupGame()
         }
@@ -235,6 +237,7 @@ struct FishCuttingGameView: View {
         showDashedLines = false
         isKnifeMoving = false
         if audioManager.bgAudioPlayer == nil {
+            audioManager.stopBackgroundMusic()
             audioManager.playBackgroundMusic()
             
         }
@@ -461,6 +464,7 @@ struct FishCuttingGameView: View {
     // MARK: - Round Management
     private func startNextRound() {
         if audioManager.bgAudioPlayer?.isPlaying != true {
+            audioManager.stopBackgroundMusic()
             audioManager.playBackgroundMusic()
         }
         fishCuts = []
@@ -529,6 +533,9 @@ struct FishCuttingGameView: View {
     
     
     private func resetGame() {
+        audioManager.stopBackgroundMusic()
+        audioManager.playBackgroundMusic()
+        
         isPlaying = false
         customerState = .asking
         requestedCuts = Int.random(in: GameConstants.minCuts...GameConstants.maxCuts)
@@ -586,7 +593,7 @@ struct FishCuttingGameView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             startKnifeMovement()
-            audioManager.playBackgroundMusic()
+//            audioManager.playBackgroundMusic()
         }
     }
 }

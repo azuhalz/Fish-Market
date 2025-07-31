@@ -19,7 +19,7 @@ class AudioManager: ObservableObject {
         if bgAudioPlayer == nil {
             do {
                 bgAudioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                bgAudioPlayer?.numberOfLoops = -1 // Loop indefinitely
+                bgAudioPlayer?.numberOfLoops = 0 // Loop indefinitely
                 bgAudioPlayer?.prepareToPlay()
                 bgAudioPlayer?.volume = 0.5
                 bgAudioPlayer?.play()

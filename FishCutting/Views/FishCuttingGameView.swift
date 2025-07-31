@@ -196,8 +196,8 @@ struct FishCuttingGameView: View {
         }
         .onAppear {
 //            audioManager.playBackgroundMusic()
-            audioManager.stopBackgroundMusic()
-            audioManager.playBackgroundMusic()
+//            audioManager.stopBackgroundMusic()
+//            audioManager.playBackgroundMusic()
             setupGame()
         }
         .onReceive(timer) { _ in
@@ -236,11 +236,11 @@ struct FishCuttingGameView: View {
         customerOpacity = 0
         showDashedLines = false
         isKnifeMoving = false
-        if audioManager.bgAudioPlayer == nil {
-            audioManager.stopBackgroundMusic()
-            audioManager.playBackgroundMusic()
-            
-        }
+//        if audioManager.bgAudioPlayer == nil {
+//            audioManager.stopBackgroundMusic()
+//            audioManager.playBackgroundMusic()
+//            
+//        }
         
         // Animate both customer and fish entrance together
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -463,10 +463,10 @@ struct FishCuttingGameView: View {
     
     // MARK: - Round Management
     private func startNextRound() {
-        if audioManager.bgAudioPlayer?.isPlaying != true {
-            audioManager.stopBackgroundMusic()
-            audioManager.playBackgroundMusic()
-        }
+//        if audioManager.bgAudioPlayer?.isPlaying != true {
+//            audioManager.stopBackgroundMusic()
+//            audioManager.playBackgroundMusic()
+//        }
         fishCuts = []
         isCutting = false
         showCutResult = false
@@ -533,8 +533,8 @@ struct FishCuttingGameView: View {
     
     
     private func resetGame() {
-        audioManager.stopBackgroundMusic()
-        audioManager.playBackgroundMusic()
+//        audioManager.stopBackgroundMusic()
+//        audioManager.playBackgroundMusic()
         
         isPlaying = false
         customerState = .asking
